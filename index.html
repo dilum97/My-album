@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dilum & Thilini — The Most Important Moments of Our Life</title>
+<meta name="description" content="A wedding album by Dilum & Thilini — browse photos and videos from our pre-shoot, wedding days, and homecoming, and download your favourite memories.">
+<meta name="theme-color" content="#C9A24B">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Dilum & Thilini — Our Wedding Album">
+<meta property="og:description" content="The most important moments of Dilum and Thilini's life — relive the story.">
+<meta property="og:image" content="./cover.jpg">
+
+<!-- PWA -->
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="icon" href="./icons/icon-192.png">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<!-- ============ LOADER ============ -->
+<div id="loader">
+  <div class="loader-ring">
+    <span class="monogram" style="width:64px;height:64px;color:var(--color-rose-gold)">
+      <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="1" opacity=".5"/><text x="32" y="40" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="24" fill="currentColor">D&amp;T</text></svg>
+    </span>
+  </div>
+  <p class="loader-text">Loading our story…</p>
+</div>
+
+<!-- ============ TOPBAR ============ -->
+<header id="topbar">
+  <div class="brand">
+    <span class="monogram" style="width:34px;height:34px;color:var(--color-gold)">
+      <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="1" opacity=".5"/><text x="32" y="40" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="24" fill="currentColor">D&amp;T</text></svg>
+    </span>
+    <span>Dilum &amp; Thilini</span>
+  </div>
+  <div class="topbar-actions">
+    <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode"></button>
+    <div id="userChip" class="icon-btn" tabindex="0" role="button" aria-label="Account"></div>
+  </div>
+</header>
+
+<!-- ============ HOME VIEW ============ -->
+<main id="homeView" class="view active">
+
+  <!-- Hero -->
+  <section class="hero">
+    <video autoplay muted loop playsinline poster="./cover.jpg">
+      <source src="./video.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content">
+      <p class="hero-eyebrow">A love story, captured</p>
+      <h1 class="hero-title">The most important moments<br>of <span class="amp">Dilum</span> &amp; <span class="amp">Thilini's</span> life</h1>
+      <p class="hero-date">Pre-shoot · Wedding Day · Homecoming</p>
+    </div>
+    <div class="scroll-cue"><span>Scroll</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </section>
+
+  <!-- Random memory slideshow -->
+  <section class="memories">
+    <div class="section-head">
+      <p class="eyebrow">Glimpses</p>
+      <h2 class="section-title">Moments We Treasure</h2>
+      <p class="section-sub">A few frames, chosen at random, from everything we've shared so far.</p>
+    </div>
+    <div class="memory-frame">
+      <div class="memory-frame-inner" id="memoryFrameInner">
+        <div class="placeholder">Your memories<br>will glow here soon</div>
+      </div>
+    </div>
+    <div class="memory-dots" id="memoryDots"></div>
+  </section>
+
+  <div class="flourish-divider">
+    <svg viewBox="0 0 340 18"><line x1="0" y1="9" x2="145" y2="9" stroke="var(--color-gold)" stroke-width="1"/><circle cx="170" cy="9" r="4" fill="none" stroke="var(--color-rose-gold)" stroke-width="1.2"/><line x1="195" y1="9" x2="340" y2="9" stroke="var(--color-gold)" stroke-width="1"/></svg>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <div class="search-box">
+      <span data-icon="search" style="width:17px;height:17px;color:var(--color-rose-gold)"></span>
+      <input id="searchInput" type="text" placeholder="Search a moment… e.g. Wedding day 1" aria-label="Search photos">
+    </div>
+  </div>
+
+  <!-- Categories -->
+  <section class="categories">
+    <div class="section-head">
+      <p class="eyebrow">The Story</p>
+      <h2 class="section-title">Explore Our Album</h2>
+      <p class="section-sub">Every chapter of the day, organised so you never miss a memory.</p>
+    </div>
+    <div class="cat-grid" id="categoryGrid">
+      <!-- populated by app.js -->
+    </div>
+  </section>
+</main>
+
+<!-- ============ GALLERY VIEW ============ -->
+<section id="galleryView" class="view">
+  <div class="gallery-header">
+    <button class="back-btn" id="backToHome"><span data-icon="back" style="width:14px;height:14px"></span> All categories</button>
+    <h2 class="gallery-title" id="galleryTitle">Category</h2>
+    <p class="gallery-meta" id="galleryMeta"></p>
+  </div>
+  <div class="skeleton-grid" id="gallerySkeleton" style="display:none;">
+    <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+  </div>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+
+<!-- ============ LIGHTBOX ============ -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-controls">
+    <button class="icon-btn" id="lightboxDownload" aria-label="Download"><span data-icon="download" style="width:18px;height:18px"></span></button>
+    <button class="icon-btn" id="lightboxClose" aria-label="Close"><span data-icon="close" style="width:18px;height:18px"></span></button>
+  </div>
+  <button class="lb-nav lb-prev" id="lightboxPrev" aria-label="Previous"><span data-icon="prev" style="width:20px;height:20px"></span></button>
+  <button class="lb-nav lb-next" id="lightboxNext" aria-label="Next"><span data-icon="next" style="width:20px;height:20px"></span></button>
+  <div class="lightbox-media" id="lightboxMedia"></div>
+  <div class="lb-counter" id="lightboxCounter"></div>
+</div>
+
+<!-- ============ LOGIN MODAL ============ -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-card">
+    <button class="icon-btn modal-close" data-close-modal aria-label="Close"><span data-icon="close" style="width:16px;height:16px"></span></button>
+    <span class="monogram" style="width:46px;height:46px;color:var(--color-rose-gold);margin-bottom:1rem;">
+      <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="1" opacity=".5"/><text x="32" y="40" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="24" fill="currentColor">D&amp;T</text></svg>
+    </span>
+    <h3>Sign in to download</h3>
+    <p>Sign in with Google so we know who's keeping a copy of this memory.</p>
+    <button class="btn btn-google" id="googleSignInBtn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
+      Continue with Google
+    </button>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <span class="monogram" style="width:48px;height:48px;color:var(--color-gold);margin:0 auto 1rem;display:block;">
+    <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="1" opacity=".5"/><text x="32" y="40" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="24" fill="currentColor">D&amp;T</text></svg>
+  </span>
+  <h4>Dilum &amp; Thilini</h4>
+  <p>Thank you for being part of our story.</p>
+  <div class="footer-actions">
+    <button class="btn btn-ghost" data-share><span data-icon="share" style="width:16px;height:16px"></span> Share this album</button>
+  </div>
+  <p class="footer-fine">© <span id="year"></span> Dilum &amp; Thilini's Wedding Album. Made with love.</p>
+</footer>
+
+<button id="scrollTop" aria-label="Scroll to top"></button>
+<div id="toast-stack" aria-live="polite"></div>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
