@@ -12,7 +12,7 @@ import {
   addDoc, updateDoc, deleteDoc, doc, increment, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const ADMIN_EMAIL = "dilumhimesh34@gmail.com";
+const ADMIN_EMAIL = "www.dilumhimesh34@gmail.com";
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
