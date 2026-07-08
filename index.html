@@ -3,27 +3,736 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Dilum & Thilini — The Most Important Moments of Our Life</title>
-<meta name="description" content="A wedding album by Dilum & Thilini — browse photos and videos from our pre-shoot, wedding days, and homecoming, and download your favourite memories.">
+<title>Dilum &amp; Thilini — The Most Important Moments of Our Life</title>
+<meta name="description" content="A wedding album by Dilum &amp; Thilini — browse photos and videos from our pre-shoot, wedding days, and homecoming.">
 <meta name="theme-color" content="#C9A24B">
-
-<!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="Dilum & Thilini — Our Wedding Album">
+<meta property="og:title" content="Dilum &amp; Thilini — Our Wedding Album">
 <meta property="og:description" content="The most important moments of Dilum and Thilini's life — relive the story.">
-<meta property="og:image" content="./cover.jpg">
-
-<!-- PWA -->
-<link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" href="./icons/icon-192.png">
-<link rel="icon" href="./icons/icon-192.png">
-
-<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   THE MOST IMPORTANT MOMENTS — Dilum & Thilini
+   Design system: cream + gold + rose-gold + soft pink
+   Display: Cormorant Garamond  |  Body/UI: Jost
+   Signature: interlocking "D & T" gold monogram + vine motif
+   ========================================================= */
 
-<link rel="stylesheet" href="./style.css">
+:root{
+  /* ---- Palette ---- */
+  --color-cream:        #FBF6EF;
+  --color-cream-deep:   #F4ECE0;
+  --color-white:        #FFFFFF;
+  --color-gold:         #C9A24B;
+  --color-gold-light:   #E8D2A0;
+  --color-gold-deep:    #9C7A30;
+  --color-rose-gold:    #B76E79;
+  --color-rose-gold-lt: #D49AA3;
+  --color-soft-pink:    #F3D9DC;
+  --color-ink:          #3A2E2A;
+  --color-ink-soft:     #6B5C56;
+  --color-line:         rgba(58,46,42,0.12);
+
+  /* ---- Glass ---- */
+  --glass-bg:           rgba(255,255,255,0.55);
+  --glass-bg-strong:    rgba(255,255,255,0.78);
+  --glass-border:       rgba(201,162,75,0.35);
+  --glass-blur:         14px;
+
+  /* ---- Surfaces (re-themed for dark mode) ---- */
+  --bg-page:            var(--color-cream);
+  --bg-elevated:        var(--color-white);
+  --text-primary:       var(--color-ink);
+  --text-muted:         var(--color-ink-soft);
+  --accent:             var(--color-rose-gold);
+  --accent-2:           var(--color-gold);
+
+  /* ---- Type ---- */
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-body: "Jost", "Segoe UI", sans-serif;
+
+  /* ---- Misc ---- */
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+  --shadow-soft: 0 10px 35px rgba(58,46,42,0.12);
+  --shadow-deep: 0 25px 60px rgba(58,46,42,0.22);
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --header-h: 76px;
+}
+
+[data-theme="dark"]{
+  --bg-page:        #241B19;
+  --bg-elevated:     #2E2220;
+  --color-cream:     #2A201D;
+  --color-cream-deep:#322522;
+  --text-primary:    #F4ECE0;
+  --text-muted:      #C9BDB6;
+  --color-ink:        #F4ECE0;
+  --color-ink-soft:   #C9BDB6;
+  --color-line:       rgba(244,236,224,0.12);
+  --glass-bg:         rgba(46,34,32,0.55);
+  --glass-bg-strong:  rgba(46,34,32,0.82);
+  --glass-border:     rgba(201,162,75,0.3);
+  --shadow-soft: 0 10px 35px rgba(0,0,0,0.35);
+  --shadow-deep: 0 25px 60px rgba(0,0,0,0.5);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+html{ scroll-behavior:smooth; }
+
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *, *::before, *::after{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+}
+
+body{
+  font-family: var(--font-body);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  transition: background .4s var(--ease), color .4s var(--ease);
+}
+
+img{ max-width:100%; display:block; }
+button{ font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+a{ color:inherit; text-decoration:none; }
+ul{ list-style:none; }
+
+:focus-visible{
+  outline: 2px solid var(--color-rose-gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.eyebrow{
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-rose-gold);
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  justify-content:center;
+}
+.eyebrow::before, .eyebrow::after{
+  content:"";
+  width:22px;
+  height:1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold));
+}
+.eyebrow::after{ transform:scaleX(-1); }
+
+.section-title{
+  font-family: var(--font-display);
+  font-weight:500;
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  text-align:center;
+  margin: .4rem 0 .2rem;
+  color: var(--text-primary);
+}
+.section-sub{
+  text-align:center;
+  color: var(--text-muted);
+  max-width:520px;
+  margin: 0 auto 2.2rem;
+  font-size:.95rem;
+}
+.section-head{ padding: 0 1.5rem; margin-bottom: 1rem; }
+
+.container{ max-width:1180px; margin:0 auto; padding:0 1.25rem; }
+
+/* ---------- Monogram (signature element) ---------- */
+.monogram{ display:inline-block; line-height:0; }
+.monogram svg{ display:block; }
+.flourish-divider{
+  display:flex; align-items:center; justify-content:center;
+  gap:.9rem; margin: 2.6rem auto; opacity:.85;
+}
+.flourish-divider svg{ width:100%; max-width:340px; height:18px; }
+
+/* ---------- Loader ---------- */
+#loader{
+  position:fixed; inset:0; z-index:9999;
+  background: var(--color-cream);
+  display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1rem;
+  transition: opacity .6s var(--ease), visibility .6s var(--ease);
+}
+#loader.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+.loader-ring{ width:64px; height:64px; position:relative; }
+.loader-ring .monogram{ animation: loaderPulse 1.8s ease-in-out infinite; }
+@keyframes loaderPulse{ 0%,100%{ opacity:.45; transform:scale(.94); } 50%{ opacity:1; transform:scale(1); } }
+.loader-text{ font-family:var(--font-display); font-style:italic; color:var(--color-ink-soft); font-size:.95rem; letter-spacing:.05em; }
+
+/* ---------- Top bar ---------- */
+#topbar{
+  position:fixed; top:0; left:0; right:0; z-index:500;
+  height: var(--header-h);
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 0 1.4rem;
+  background: transparent;
+  transition: background .4s var(--ease), box-shadow .4s var(--ease), height .3s var(--ease);
+}
+#topbar.scrolled{
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-soft);
+  border-bottom: 1px solid var(--glass-border);
+  height: 64px;
+}
+.brand{ display:flex; align-items:center; gap:.6rem; font-family:var(--font-display); font-size:1.1rem; letter-spacing:.02em; }
+.brand .monogram{ width:34px; height:34px; }
+.topbar-actions{ display:flex; align-items:center; gap:.5rem; }
+.icon-btn{
+  width:40px; height:40px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background: var(--glass-bg);
+  border:1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  transition: transform .25s var(--ease), background .25s var(--ease);
+  color: var(--text-primary);
+}
+.icon-btn:hover{ transform: translateY(-2px); background: var(--color-soft-pink); }
+.icon-btn svg{ width:18px; height:18px; }
+
+.user-chip{
+  display:flex; align-items:center; gap:.5rem;
+  padding:.3rem .8rem .3rem .3rem;
+  border-radius:999px;
+  background: var(--glass-bg);
+  border:1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  font-size:.82rem;
+}
+.user-chip img{ width:28px; height:28px; border-radius:50%; }
+
+/* ---------- Hero ---------- */
+.hero{
+  position:relative; min-height:100vh; width:100%;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden; text-align:center;
+}
+.hero video{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; z-index:0;
+}
+.hero::before{
+  content:""; position:absolute; inset:0; z-index:1;
+  background: linear-gradient(180deg, rgba(45,28,26,.55) 0%, rgba(58,30,32,.35) 45%, rgba(36,21,20,.78) 100%);
+}
+.hero-content{ position:relative; z-index:2; padding: 7rem 1.5rem 4rem; color:#fff; max-width:760px; }
+.hero-eyebrow{
+  font-size:.74rem; letter-spacing:.4em; text-transform:uppercase;
+  color: var(--color-gold-light); margin-bottom:1.1rem; opacity:0; animation: riseIn .9s var(--ease) .2s forwards;
+}
+.hero-title{
+  font-family: var(--font-display);
+  font-style:italic;
+  font-weight:500;
+  font-size: clamp(2.1rem, 6.5vw, 4.4rem);
+  line-height:1.18;
+  text-shadow: 0 4px 30px rgba(0,0,0,.35);
+  opacity:0; animation: riseIn 1s var(--ease) .45s forwards;
+}
+.hero-title .amp{ color: var(--color-gold-light); font-style:normal; }
+.hero-date{
+  margin-top:1.3rem; font-size:.92rem; letter-spacing:.08em; color:rgba(255,255,255,.85);
+  opacity:0; animation: riseIn 1s var(--ease) .7s forwards;
+}
+@keyframes riseIn{ from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:translateY(0); } }
+
+.scroll-cue{
+  position:absolute; bottom:28px; left:50%; transform:translateX(-50%); z-index:2;
+  display:flex; flex-direction:column; align-items:center; gap:.4rem; color:#fff; opacity:.85;
+  animation: bob 2.2s ease-in-out infinite;
+}
+.scroll-cue span{ font-size:.65rem; letter-spacing:.3em; text-transform:uppercase; }
+@keyframes bob{ 0%,100%{ transform:translate(-50%,0); } 50%{ transform:translate(-50%,8px); } }
+
+/* ---------- Slideshow (memory frame) ---------- */
+.memories{ padding: 5.5rem 0 4rem; background: var(--bg-page); }
+.memory-frame{
+  position:relative; width:min(90vw, 480px); aspect-ratio: 4/5; margin: 0 auto;
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  background: linear-gradient(160deg, var(--color-gold-light), var(--color-gold) 55%, var(--color-rose-gold));
+  box-shadow: var(--shadow-deep);
+}
+.memory-frame-inner{
+  position:relative; width:100%; height:100%; border-radius: calc(var(--radius-lg) - 8px);
+  overflow:hidden; background:#000;
+}
+.memory-frame-inner img{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  opacity:0; transition: opacity 1.1s ease-in-out, transform 6s linear;
+  transform: scale(1.02);
+}
+.memory-frame-inner img.active{ opacity:1; transform: scale(1.08); }
+.memory-frame-inner .placeholder{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#fff; opacity:.55; font-family:var(--font-display); font-style:italic; text-align:center; padding:1rem;
+}
+.memory-dots{ display:flex; justify-content:center; gap:6px; margin-top:1.2rem; }
+.memory-dots span{ width:6px; height:6px; border-radius:50%; background: var(--color-line); transition: background .3s, width .3s; }
+.memory-dots span.active{ background: var(--color-rose-gold); width:18px; border-radius:4px; }
+
+/* ---------- Search ---------- */
+.search-wrap{ display:flex; justify-content:center; padding: 0 1.5rem 2.2rem; }
+.search-box{
+  width:100%; max-width:420px; display:flex; align-items:center; gap:.6rem;
+  background: var(--glass-bg); border:1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: 999px; padding: .7rem 1.2rem; box-shadow: var(--shadow-soft);
+}
+.search-box svg{ width:17px; height:17px; flex-shrink:0; color: var(--color-rose-gold); }
+.search-box input{
+  border:none; background:none; outline:none; width:100%;
+  font-family:var(--font-body); font-size:.92rem; color:var(--text-primary);
+}
+.search-box input::placeholder{ color: var(--text-muted); }
+
+/* ---------- Categories ---------- */
+.categories{ padding: 2rem 0 5rem; }
+.cat-grid{
+  display:grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;
+  padding: 0 1.25rem; max-width:1180px; margin:0 auto;
+}
+.cat-card{
+  position:relative; border-radius: var(--radius-md); overflow:hidden;
+  aspect-ratio: 3/3.6; cursor:pointer; isolation:isolate;
+  box-shadow: var(--shadow-soft);
+  transition: transform .45s var(--ease), box-shadow .45s var(--ease);
+}
+.cat-card:hover{ transform: translateY(-6px); box-shadow: var(--shadow-deep); }
+.cat-card .cat-bg{
+  position:absolute; inset:0; background-size:cover; background-position:center;
+  background-color: var(--color-soft-pink);
+  transition: transform .8s var(--ease);
+}
+.cat-card:hover .cat-bg{ transform: scale(1.08); }
+.cat-card::after{
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(40,24,22,0) 35%, rgba(40,24,22,.78) 100%);
+}
+.cat-card-body{
+  position:absolute; left:0; right:0; bottom:0; z-index:2; padding: 1rem 1.1rem 1.1rem;
+  color:#fff;
+}
+.cat-card-icon{ width:26px; height:26px; margin-bottom:.5rem; opacity:.9; }
+.cat-card h3{
+  font-family: var(--font-display); font-weight:500; font-size:1.18rem; line-height:1.2;
+}
+.cat-card .cat-count{ font-size:.74rem; letter-spacing:.08em; color: var(--color-gold-light); margin-top:.2rem; display:block; }
+.cat-empty-icon{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:.3; }
+
+@media (min-width: 620px){ .cat-grid{ grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 980px){ .cat-grid{ grid-template-columns: repeat(5, 1fr); gap:1.3rem; } }
+
+/* ---------- Gallery view ---------- */
+.view{ display:none; }
+.view.active{ display:block; animation: viewFade .55s var(--ease); }
+@keyframes viewFade{ from{ opacity:0; transform: translateY(14px); } to{ opacity:1; transform:translateY(0); } }
+
+.gallery-header{
+  padding: 6.5rem 1.5rem 1.5rem; text-align:center; position:relative;
+}
+.back-btn{
+  display:inline-flex; align-items:center; gap:.4rem; font-size:.82rem;
+  letter-spacing:.06em; text-transform:uppercase; color: var(--color-rose-gold);
+  margin-bottom:1rem; padding:.4rem .9rem; border-radius:999px;
+  background: var(--glass-bg); border:1px solid var(--glass-border);
+}
+.back-btn svg{ width:14px; height:14px; }
+.gallery-title{ font-family:var(--font-display); font-size:clamp(1.7rem,4vw,2.6rem); font-style:italic; }
+.gallery-meta{ color:var(--text-muted); font-size:.85rem; margin-top:.3rem; }
+
+.gallery-grid{
+  display:grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  padding: 0 0.75rem 4rem; max-width:1180px; margin:0 auto;
+}
+@media (min-width:700px){ .gallery-grid{ grid-template-columns: repeat(6,1fr); gap:10px; padding:0 1.5rem 4rem; } }
+@media (min-width:1100px){ .gallery-grid{ grid-template-columns: repeat(8,1fr); } }
+
+.thumb{
+  position:relative; border-radius: 10px; overflow:hidden; cursor:pointer;
+  aspect-ratio: 1/1; background: var(--color-cream-deep);
+}
+.thumb img{
+  width:100%; height:100%; object-fit:cover;
+  transition: transform .5s var(--ease), opacity .4s ease; opacity:0;
+}
+.thumb img.loaded{ opacity:1; }
+.thumb:hover img{ transform: scale(1.12); }
+.thumb .dl-badge{
+  position:absolute; bottom:5px; right:5px; background:rgba(0,0,0,.55);
+  color:#fff; font-size:.62rem; padding:2px 6px; border-radius:8px; backdrop-filter: blur(4px);
+  display:flex; align-items:center; gap:3px;
+}
+.thumb.is-video::before{
+  content:""; position:absolute; inset:0; margin:auto; width:34px; height:34px;
+  background: rgba(255,255,255,.85) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23B76E79' d='M8 5v14l11-7z'/%3E%3C/svg%3E") center/14px no-repeat;
+  border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%);
+}
+
+.empty-state{
+  text-align:center; padding: 3rem 1.5rem; color: var(--text-muted);
+}
+.empty-state svg{ width:54px; height:54px; opacity:.4; margin-bottom:1rem; }
+.empty-state h4{ font-family:var(--font-display); font-size:1.3rem; color:var(--text-primary); margin-bottom:.3rem; }
+
+.skeleton-grid{ display:grid; grid-template-columns: repeat(4,1fr); gap:6px; padding:0 .75rem; }
+.skeleton{ aspect-ratio:1/1; border-radius:10px; background: linear-gradient(110deg, var(--color-cream-deep) 8%, var(--color-soft-pink) 18%, var(--color-cream-deep) 33%); background-size:200% 100%; animation: shimmer 1.4s linear infinite; }
+@keyframes shimmer{ to{ background-position-x: -200%; } }
+
+/* ---------- Lightbox ---------- */
+.lightbox{
+  position:fixed; inset:0; z-index:1000; background: rgba(20,12,11,.92);
+  backdrop-filter: blur(6px); display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; transition: opacity .35s var(--ease), visibility .35s var(--ease);
+}
+.lightbox.open{ opacity:1; visibility:visible; }
+.lightbox-media{ max-width:92vw; max-height:80vh; position:relative; touch-action: pan-y; }
+.lightbox-media img, .lightbox-media video{
+  max-width:92vw; max-height:80vh; border-radius:8px; box-shadow: 0 30px 80px rgba(0,0,0,.5);
+  animation: lbIn .4s var(--ease);
+}
+@keyframes lbIn{ from{ opacity:0; transform: scale(.96); } to{ opacity:1; transform:scale(1); } }
+.lightbox-controls{
+  position:absolute; top:18px; right:18px; display:flex; gap:.5rem; z-index:5;
+}
+.lightbox-controls .icon-btn{ background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.25); color:#fff; }
+.lightbox-controls .icon-btn:hover{ background: rgba(255,255,255,.25); }
+.lb-nav{
+  position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px;
+  border-radius:50%; background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);
+  display:flex; align-items:center; justify-content:center; color:#fff; transition: background .2s;
+  z-index:5;
+}
+.lb-nav:hover{ background: rgba(255,255,255,.28); }
+.lb-prev{ left:14px; } .lb-next{ right:14px; }
+.lb-nav svg{ width:20px; height:20px; }
+.lb-counter{
+  position:absolute; bottom:16px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,.75);
+  font-size:.78rem; letter-spacing:.05em; z-index:5;
+}
+@media (max-width:640px){ .lb-nav{ width:36px; height:36px; } .lb-prev{ left:6px; } .lb-next{ right:6px; } }
+
+/* ---------- Modals (login / share) ---------- */
+.modal-overlay{
+  position:fixed; inset:0; z-index:1100; background: rgba(20,12,11,.55);
+  display:flex; align-items:center; justify-content:center; padding:1.2rem;
+  opacity:0; visibility:hidden; transition: opacity .3s var(--ease), visibility .3s var(--ease);
+}
+.modal-overlay.open{ opacity:1; visibility:visible; }
+.modal-card{
+  width:100%; max-width:380px; background: var(--glass-bg-strong);
+  border:1px solid var(--glass-border); backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--radius-lg); padding: 2.2rem 1.8rem; text-align:center;
+  box-shadow: var(--shadow-deep); transform: translateY(14px) scale(.97);
+  transition: transform .35s var(--ease);
+  position:relative;
+}
+.modal-overlay.open .modal-card{ transform: translateY(0) scale(1); }
+.modal-card .monogram{ width:46px; height:46px; margin-bottom:1rem; }
+.modal-card h3{ font-family:var(--font-display); font-size:1.5rem; font-style:italic; margin-bottom:.5rem; }
+.modal-card p{ color:var(--text-muted); font-size:.88rem; margin-bottom:1.5rem; }
+.modal-close{ position:absolute; top:14px; right:14px; }
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+  padding: .75rem 1.6rem; border-radius:999px; font-size:.85rem; letter-spacing:.04em;
+  font-weight:500; transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.btn-gold{
+  background: linear-gradient(120deg, var(--color-gold-light), var(--color-gold));
+  color:#3A2A0E; box-shadow: 0 8px 22px rgba(201,162,75,.35);
+}
+.btn-gold:hover{ transform: translateY(-2px); box-shadow: 0 12px 28px rgba(201,162,75,.45); }
+.btn-google{
+  width:100%; background:#fff; color:#3A2E2A; border:1px solid var(--color-line);
+}
+.btn-google:hover{ transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+.btn-google img{ width:18px; height:18px; }
+.btn-ghost{ background: var(--glass-bg); border:1px solid var(--glass-border); }
+
+/* ---------- Toast ---------- */
+#toast-stack{ position:fixed; bottom:22px; left:50%; transform:translateX(-50%); z-index:1300; display:flex; flex-direction:column; gap:.5rem; align-items:center; width:100%; padding:0 1rem; }
+.toast{
+  background: var(--color-ink); color:#fff; padding:.7rem 1.2rem; border-radius:999px;
+  font-size:.84rem; box-shadow: var(--shadow-deep); display:flex; align-items:center; gap:.5rem;
+  animation: toastIn .3s var(--ease);
+  max-width: 92vw;
+}
+[data-theme="dark"] .toast{ background: var(--color-gold); color:#2A1F0E; }
+@keyframes toastIn{ from{ opacity:0; transform: translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+
+/* ---------- Footer ---------- */
+footer{
+  background: linear-gradient(180deg, var(--color-soft-pink), var(--color-cream-deep));
+  padding: 3.5rem 1.5rem 2.5rem; text-align:center; margin-top:2rem;
+}
+footer .monogram{ width:48px; height:48px; margin-bottom:1rem; }
+footer h4{ font-family:var(--font-display); font-style:italic; font-size:1.4rem; margin-bottom:.4rem; }
+footer p{ color: var(--text-muted); font-size:.85rem; }
+.footer-actions{ display:flex; gap:.7rem; justify-content:center; margin: 1.4rem 0; flex-wrap:wrap; }
+.footer-fine{ margin-top:1.6rem; font-size:.72rem; color: var(--text-muted); opacity:.75; }
+
+/* ---------- Scroll to top ---------- */
+#scrollTop{
+  position:fixed; bottom:22px; right:18px; z-index:400;
+  width:46px; height:46px; border-radius:50%;
+  background: var(--glass-bg-strong); border:1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)); box-shadow: var(--shadow-soft);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; transform: translateY(10px);
+  transition: opacity .3s, visibility .3s, transform .3s;
+}
+#scrollTop.show{ opacity:1; visibility:visible; transform:translateY(0); }
+#scrollTop svg{ width:18px; height:18px; }
+
+/* ---------- Inline icon sizing ---------- */
+[data-icon] svg, .icon-btn svg, .lb-nav svg, .back-btn svg{ width:100%; height:100%; display:block; }
+
+/* ---------- Misc utility ---------- */
+.sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+.progress-bar{ height:3px; background: var(--color-line); border-radius:3px; overflow:hidden; margin-top:.6rem; }
+.progress-bar > span{ display:block; height:100%; background: linear-gradient(90deg, var(--color-gold), var(--color-rose-gold)); width:0%; transition:width .25s ease; }
+
+/* =========================================================
+   ADMIN PANEL
+   ========================================================= */
+.admin-login-wrap{
+  min-height:100vh; display:flex; align-items:center; justify-content:center; padding:1.5rem;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(201,162,75,.16), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(183,110,121,.16), transparent 45%),
+    var(--bg-page);
+}
+.admin-login-card{
+  width:100%; max-width:380px; background: var(--glass-bg-strong);
+  border:1px solid var(--glass-border); backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--radius-lg); padding: 2.4rem 2rem; text-align:center; box-shadow: var(--shadow-deep);
+}
+.admin-login-card h1{ font-family:var(--font-display); font-style:italic; font-size:1.7rem; margin: .8rem 0 .3rem; }
+.admin-login-card p{ color:var(--text-muted); font-size:.85rem; margin-bottom:1.6rem; }
+.field{ text-align:left; margin-bottom:1rem; }
+.field label{ display:block; font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.4rem; }
+.field input{
+  width:100%; padding:.75rem .9rem; border-radius:12px; border:1px solid var(--color-line);
+  background: var(--bg-elevated); color:var(--text-primary); font-family:var(--font-body); font-size:.92rem; outline:none;
+  transition: border-color .2s;
+}
+.field input:focus{ border-color: var(--color-rose-gold); }
+.admin-error{ color:#A23B3B; font-size:.82rem; margin: -0.3rem 0 1rem; min-height:1em; }
+
+.admin-shell{ display:none; min-height:100vh; }
+.admin-shell.active{ display:block; }
+.admin-topbar{
+  position:sticky; top:0; z-index:200; display:flex; align-items:center; justify-content:space-between;
+  padding: .9rem 1.4rem; background: var(--glass-bg-strong); backdrop-filter: blur(var(--glass-blur));
+  border-bottom:1px solid var(--glass-border);
+}
+.admin-main{ max-width:1100px; margin:0 auto; padding: 1.6rem 1.2rem 4rem; }
+
+.stat-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:.8rem; margin-bottom:1.8rem; }
+@media (min-width:700px){ .stat-grid{ grid-template-columns: repeat(4,1fr); } }
+.stat-card{
+  background: var(--glass-bg); border:1px solid var(--glass-border); backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--radius-md); padding: 1.1rem 1.2rem; box-shadow: var(--shadow-soft);
+}
+.stat-card .stat-num{ font-family:var(--font-display); font-size:1.9rem; font-weight:600; color: var(--color-rose-gold); }
+.stat-card .stat-label{ font-size:.74rem; letter-spacing:.05em; text-transform:uppercase; color:var(--text-muted); margin-top:.2rem; }
+
+.panel{
+  background: var(--bg-elevated); border:1px solid var(--color-line); border-radius: var(--radius-md);
+  padding: 1.4rem; margin-bottom:1.6rem; box-shadow: var(--shadow-soft);
+}
+.panel-head{ display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.1rem; flex-wrap:wrap; }
+.panel-head h2{ font-family:var(--font-display); font-style:italic; font-size:1.3rem; }
+.panel-head p.hint{ font-size:.78rem; color:var(--text-muted); margin-top:.15rem; }
+
+.btn-sm{ padding:.45rem 1rem; font-size:.78rem; }
+.btn-danger{ background: rgba(162,59,59,.1); color:#A23B3B; border:1px solid rgba(162,59,59,.25); }
+.btn-danger:hover{ background: rgba(162,59,59,.18); }
+
+.cat-manage-list{ display:flex; flex-direction:column; gap:.55rem; }
+.cat-manage-row{
+  display:flex; align-items:center; gap:.8rem; padding:.7rem .9rem; border-radius:12px;
+  background: var(--color-cream); border:1px solid var(--color-line);
+}
+.cat-manage-row .cm-name{ flex:1; font-weight:500; }
+.cat-manage-row .cm-name input{
+  border:none; background:transparent; font-family:inherit; font-size:.95rem; color:var(--text-primary);
+  width:100%; padding:.2rem 0; border-bottom:1px dashed transparent;
+}
+.cat-manage-row .cm-name input:focus{ outline:none; border-bottom-color: var(--color-rose-gold); }
+.cat-manage-row .cm-count{ font-size:.75rem; color:var(--text-muted); white-space:nowrap; }
+.cat-manage-row .cm-actions{ display:flex; gap:.4rem; }
+.icon-btn-sm{ width:32px; height:32px; }
+.icon-btn-sm svg{ width:15px; height:15px; }
+
+.dropzone{
+  border:1.5px dashed var(--color-gold); border-radius: var(--radius-md); padding: 2rem 1rem;
+  text-align:center; cursor:pointer; transition: background .2s, border-color .2s; background: var(--color-cream);
+}
+.dropzone.dragover{ background: var(--color-soft-pink); border-color: var(--color-rose-gold); }
+.dropzone svg{ width:32px; height:32px; color: var(--color-rose-gold); margin-bottom:.6rem; }
+.dropzone p{ font-size:.85rem; color:var(--text-muted); }
+.dropzone strong{ color: var(--color-rose-gold); }
+
+.upload-controls{ display:flex; gap:.7rem; flex-wrap:wrap; align-items:center; margin-bottom:1rem; }
+.select-field{
+  padding:.65rem .9rem; border-radius:10px; border:1px solid var(--color-line);
+  background: var(--bg-elevated); color:var(--text-primary); font-family:inherit; font-size:.88rem;
+}
+
+.upload-queue{ margin-top:1.2rem; display:flex; flex-direction:column; gap:.6rem; }
+.upload-item{
+  display:flex; align-items:center; gap:.7rem; padding:.55rem .7rem; border-radius:10px;
+  background: var(--color-cream); border:1px solid var(--color-line); font-size:.82rem;
+}
+.upload-item img{ width:38px; height:38px; border-radius:6px; object-fit:cover; flex-shrink:0; }
+.upload-item .ui-name{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.upload-item .ui-status{ font-size:.74rem; color:var(--text-muted); white-space:nowrap; }
+.upload-item.done .ui-status{ color:#5B8C5A; }
+.upload-item.error .ui-status{ color:#A23B3B; }
+.upload-item .progress-bar{ width:70px; margin:0; }
+
+.media-toolbar{ display:flex; gap:.7rem; flex-wrap:wrap; align-items:center; margin-bottom:1.2rem; }
+.media-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:8px; }
+@media (min-width:640px){ .media-grid{ grid-template-columns: repeat(5,1fr); } }
+@media (min-width:980px){ .media-grid{ grid-template-columns: repeat(7,1fr); } }
+.media-item{ position:relative; border-radius:10px; overflow:hidden; aspect-ratio:1/1; background: var(--color-cream-deep); }
+.media-item img, .media-item video{ width:100%; height:100%; object-fit:cover; }
+.media-item .mi-del{
+  position:absolute; top:4px; right:4px; width:26px; height:26px; border-radius:50%;
+  background: rgba(20,12,11,.65); color:#fff; display:flex; align-items:center; justify-content:center;
+}
+.media-item .mi-del svg{ width:13px; height:13px; }
+.media-item .mi-dl{
+  position:absolute; bottom:4px; left:4px; background:rgba(20,12,11,.65); color:#fff;
+  font-size:.62rem; padding:2px 6px; border-radius:8px;
+}
+
+.confirm-text{ font-size:.88rem; color:var(--text-muted); margin: .4rem 0 1.4rem; }
+.modal-actions{ display:flex; gap:.6rem; justify-content:center; }
+
+
+/* =========================================================
+   FULL-SCREEN SLIDESHOW (replaces framed memory widget)
+   ========================================================= */
+.ss-section {
+  position: relative;
+  width: 100%;
+  height: 85vh;
+  min-height: 480px;
+  max-height: 780px;
+  overflow: hidden;
+  background: #111;
+}
+.ss-inner {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.ss-inner img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+  transform: scale(1.04);
+  animation: ssKen 8s linear infinite alternate;
+}
+.ss-inner img.active {
+  opacity: 1;
+}
+@keyframes ssKen {
+  from { transform: scale(1.00); }
+  to   { transform: scale(1.07); }
+}
+.ss-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  background: linear-gradient(180deg, rgba(36,20,18,.3) 0%, rgba(36,20,18,.55) 60%, rgba(36,20,18,.75) 100%);
+  pointer-events: none;
+}
+.ss-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(2rem, 6vw, 4rem);
+  color: #fff;
+  margin: .5rem 0 .6rem;
+  text-shadow: 0 4px 24px rgba(0,0,0,.4);
+  line-height: 1.2;
+}
+.ss-sub {
+  color: rgba(255,255,255,.82);
+  font-size: clamp(.85rem, 2vw, 1rem);
+  max-width: 460px;
+  line-height: 1.6;
+}
+.ss-dots {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 7px;
+}
+.ss-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.45);
+  transition: background .35s, width .35s;
+  display: block;
+}
+.ss-dots span.active {
+  background: var(--color-gold);
+  width: 20px;
+  border-radius: 4px;
+}
+
+/* =========================================================
+   LIGHTBOX — pinch-zoom: allow overflow on the img itself
+   ========================================================= */
+.lightbox-media img {
+  touch-action: none;
+  will-change: transform;
+  cursor: zoom-in;
+  max-width: 92vw;
+  max-height: 80vh;
+}
+.lightbox-media img[style*="scale"] {
+  cursor: grab;
+  max-width: none;
+  max-height: none;
+}
+
+</style>
 </head>
 <body>
 
@@ -54,7 +763,6 @@
 <!-- ============ HOME VIEW ============ -->
 <main id="homeView" class="view active">
 
-  <!-- Hero -->
   <section class="hero">
     <video autoplay muted loop playsinline>
       <source src="https://res.cloudinary.com/dzta29win/video/upload/f_auto,q_auto/v1782745325/Myalbum/kjsw8twsn8stolwtnrzh.mp4" type="video/mp4">
@@ -84,29 +792,31 @@
     <svg viewBox="0 0 340 18"><line x1="0" y1="9" x2="145" y2="9" stroke="var(--color-gold)" stroke-width="1"/><circle cx="170" cy="9" r="4" fill="none" stroke="var(--color-rose-gold)" stroke-width="1.2"/><line x1="195" y1="9" x2="340" y2="9" stroke="var(--color-gold)" stroke-width="1"/></svg>
   </div>
 
-  <!-- Categories -->
   <section class="categories">
     <div class="section-head">
       <p class="eyebrow">The Story</p>
       <h2 class="section-title">Explore Our Album</h2>
       <p class="section-sub">Every chapter of the day, organised so you never miss a memory.</p>
     </div>
-    <div class="cat-grid" id="categoryGrid">
-      <!-- populated by app.js -->
-    </div>
+    <div class="cat-grid" id="categoryGrid"></div>
   </section>
 </main>
 
 <!-- ============ GALLERY VIEW ============ -->
 <section id="galleryView" class="view">
   <div class="gallery-header">
-    <button class="back-btn" id="backToHome"><span data-icon="back" style="width:14px;height:14px"></span> All categories</button>
+    <button class="back-btn" id="backToHome">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M15 18l-6-6 6-6"/></svg>
+      All categories
+    </button>
     <h2 class="gallery-title" id="galleryTitle">Category</h2>
     <p class="gallery-meta" id="galleryMeta"></p>
   </div>
   <div class="skeleton-grid" id="gallerySkeleton" style="display:none;">
-    <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
-    <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    <div class="skeleton"></div><div class="skeleton"></div>
+    <div class="skeleton"></div><div class="skeleton"></div>
+    <div class="skeleton"></div><div class="skeleton"></div>
+    <div class="skeleton"></div><div class="skeleton"></div>
   </div>
   <div class="gallery-grid" id="galleryGrid"></div>
 </section>
@@ -114,11 +824,19 @@
 <!-- ============ LIGHTBOX ============ -->
 <div class="lightbox" id="lightbox">
   <div class="lightbox-controls">
-    <button class="icon-btn" id="lightboxDownload" aria-label="Download"><span data-icon="download" style="width:18px;height:18px"></span></button>
-    <button class="icon-btn" id="lightboxClose" aria-label="Close"><span data-icon="close" style="width:18px;height:18px"></span></button>
+    <button class="icon-btn" id="lightboxDownload" aria-label="Download">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
+    </button>
+    <button class="icon-btn" id="lightboxClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
   </div>
-  <button class="lb-nav lb-prev" id="lightboxPrev" aria-label="Previous"><span data-icon="prev" style="width:20px;height:20px"></span></button>
-  <button class="lb-nav lb-next" id="lightboxNext" aria-label="Next"><span data-icon="next" style="width:20px;height:20px"></span></button>
+  <button class="lb-nav lb-prev" id="lightboxPrev" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="lb-nav lb-next" id="lightboxNext" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+  </button>
   <div class="lightbox-media" id="lightboxMedia"></div>
   <div class="lb-counter" id="lightboxCounter"></div>
 </div>
@@ -126,14 +844,16 @@
 <!-- ============ LOGIN MODAL ============ -->
 <div class="modal-overlay" id="loginModal">
   <div class="modal-card">
-    <button class="icon-btn modal-close" data-close-modal aria-label="Close"><span data-icon="close" style="width:16px;height:16px"></span></button>
-    <span class="monogram" style="width:46px;height:46px;color:var(--color-rose-gold);margin-bottom:1rem;">
+    <button class="icon-btn modal-close" data-close-modal aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <span class="monogram" style="width:46px;height:46px;color:var(--color-rose-gold);margin-bottom:1rem;display:inline-block">
       <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="1" opacity=".5"/><text x="32" y="40" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="24" fill="currentColor">D&amp;T</text></svg>
     </span>
     <h3>Sign in to download</h3>
     <p>Sign in with Google so we know who's keeping a copy of this memory.</p>
     <button class="btn btn-google" id="googleSignInBtn">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" style="width:18px;height:18px">
       Continue with Google
     </button>
   </div>
@@ -147,15 +867,659 @@
   <h4>Dilum &amp; Thilini</h4>
   <p>Thank you for being part of our story.</p>
   <div class="footer-actions">
-    <button class="btn btn-ghost" data-share><span data-icon="share" style="width:16px;height:16px"></span> Share this album</button>
+    <button class="btn btn-ghost" data-share>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:16px;height:16px"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8.1 10.7l7.8-4.4M8.1 13.3l7.8 4.4"/></svg>
+      Share this album
+    </button>
   </div>
   <p class="footer-fine">© <span id="year"></span> Dilum &amp; Thilini's Wedding Album. Made with love.</p>
 </footer>
 
-<button id="scrollTop" aria-label="Scroll to top"></button>
+<button id="scrollTop" aria-label="Scroll to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
 <div id="toast-stack" aria-live="polite"></div>
 
-<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
-<script type="module" src="./app.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, query, where, orderBy, onSnapshot, getDocs, doc, updateDoc, increment, setDoc, arrayUnion, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyDfqUtGDsRtR0GePfpZv-kqHP_dhZ3FodI",
+    authDomain: "my-album-922ba.firebaseapp.com",
+    projectId: "my-album-922ba",
+    storageBucket: "my-album-922ba.firebasestorage.app",
+    messagingSenderId: "629534378102",
+    appId: "1:629534378102:web:b51b665878c67da3fbf757"
+  };
+  const CLOUDINARY_CLOUD_NAME = "dzta29win";
+  const CLOUDINARY_UPLOAD_PRESET = "Myalbum";
+  const CLOUDINARY_FOLDER = "Myalbum";
+  const _app = initializeApp(firebaseConfig);
+  const auth = getAuth(_app);
+  const db = getFirestore(_app);
+  const googleProvider = new GoogleAuthProvider();
+  setPersistence(auth, browserLocalPersistence).catch(()=>{});
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const state = {
+  categories: [],            // [{id,name,createdAt,count,coverUrl,isVideo}]
+  allPhotos: [],             // flat cache of every photo, for search + slideshow
+  allVideos: [],             // flat cache of every video
+  galleryItems: [],          // items currently shown in the open gallery
+  galleryUnsub: null,        // active onSnapshot unsubscribe for the open category
+  currentCategory: null,
+  lightboxIndex: -1,
+  pendingDownload: null,     // item waiting on a login before it can download
+  user: null,
+  slideshowTimer: null,
+  slideshowOrder: [],
+  slideshowPos: 0
+};
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+/* ============================================================
+   CLOUDINARY URL HELPERS
+   ============================================================ */
+function cldThumb(url, w = 420) {
+  if (!url || !url.includes("/upload/")) return url;
+  return url.replace("/upload/", `/upload/c_fill,w_${w},q_auto,f_auto/`);
+}
+function cldFull(url) {
+  if (!url || !url.includes("/upload/")) return url;
+  return url.replace("/upload/", "/upload/q_auto:best,f_auto/");
+}
+function cldDownload(url) {
+  if (!url || !url.includes("/upload/")) return url;
+  return url.replace("/upload/", "/upload/fl_attachment/");
+}
+function cldVideoPoster(url) {
+  if (!url || !url.includes("/upload/")) return "";
+  return url.replace("/upload/", "/upload/so_0,c_fill,w_420/").replace(/\.[a-zA-Z0-9]+$/, ".jpg");
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function toast(msg, ms = 2600) {
+  const stack = $("#toast-stack");
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = msg;
+  stack.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = "0";
+    el.style.transform = "translateY(10px)";
+    el.style.transition = "opacity .3s, transform .3s";
+    setTimeout(() => el.remove(), 300);
+  }, ms);
+}
+
+/* ============================================================
+   ICONS (inline SVG strings, currentColor so they theme correctly)
+   ============================================================ */
+const ICONS = {
+  moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.6A9 9 0 1 1 11.4 3a7 7 0 0 0 9.6 9.6z"/></svg>`,
+  sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.6M19.4 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/></svg>`,
+  search: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>`,
+  back: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>`,
+  close: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>`,
+  prev: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>`,
+  next: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>`,
+  download: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>`,
+  share: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8.1 10.7l7.8-4.4M8.1 13.3l7.8 4.4"/></svg>`,
+  up: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>`,
+  image: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M3 17l5-5 4 4 5-6 4 5"/></svg>`,
+  film: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4"/></svg>`,
+  person: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`
+};
+$$("[data-icon]").forEach(el => { el.innerHTML = ICONS[el.dataset.icon] || ""; });
+
+/* ============================================================
+   LOADER / TOPBAR / SCROLL-TOP / DARK MODE
+   ============================================================ */
+window.addEventListener("load", () => {
+  setTimeout(() => $("#loader").classList.add("hidden"), 350);
+});
+
+window.addEventListener("scroll", () => {
+  $("#topbar").classList.toggle("scrolled", window.scrollY > 30);
+  $("#scrollTop").classList.toggle("show", window.scrollY > 500);
+}, { passive: true });
+
+$("#scrollTop").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+$("#scrollTop").innerHTML = ICONS.up;
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem("dt-theme", theme);
+  const icon = theme === "dark" ? "sun" : "moon";
+  $("#themeToggle").innerHTML = ICONS[icon];
+}
+$("#themeToggle").addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  applyTheme(cur);
+});
+applyTheme(localStorage.getItem("dt-theme") || "light");
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+onAuthStateChanged(auth, async (user) => {
+  state.user = user;
+  const chip = $("#userChip");
+  if (user) {
+    chip.innerHTML = `
+      <img src="${user.photoURL || ''}" alt="${user.displayName || 'You'}" referrerpolicy="no-referrer">
+      <span>${(user.displayName || user.email || '').split(" ")[0]}</span>`;
+    chip.classList.remove("icon-btn");
+    chip.classList.add("user-chip");
+    try {
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || ""
+      }, { merge: true });
+    } catch (e) { /* non-fatal */ }
+
+    if (state.pendingDownload) {
+      const item = state.pendingDownload;
+      state.pendingDownload = null;
+      closeModal("#loginModal");
+      performDownload(item);
+    }
+  } else {
+    chip.innerHTML = ICONS.person;
+    chip.classList.remove("user-chip");
+    chip.classList.add("icon-btn");
+  }
+});
+
+$("#userChip").addEventListener("click", (e) => {
+  if (state.user) {
+    if (confirm("Sign out of your Google account?")) signOut(auth).then(() => toast("Signed out"));
+  } else {
+    openModal("#loginModal");
+  }
+});
+
+$("#googleSignInBtn").addEventListener("click", async () => {
+  try {
+    await signInWithPopup(auth, googleProvider);
+    toast("Welcome! 🤍");
+  } catch (err) {
+    console.error(err);
+    toast("Sign-in was cancelled or failed");
+  }
+});
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+function openModal(sel) { $(sel).classList.add("open"); document.body.style.overflow = "hidden"; }
+function closeModal(sel) { $(sel).classList.remove("open"); document.body.style.overflow = ""; }
+$$(".modal-overlay").forEach(ov => {
+  ov.addEventListener("click", (e) => { if (e.target === ov) closeModal("#" + ov.id); });
+});
+$$("[data-close-modal]").forEach(btn => btn.addEventListener("click", () => closeModal("#" + btn.closest(".modal-overlay").id)));
+
+/* ============================================================
+   CATEGORIES
+   ============================================================ */
+const DEFAULT_ICON = ICONS.image;
+
+function renderCategories() {
+  const grid = $("#categoryGrid");
+  if (!state.categories.length) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1;">
+        <div class="cat-empty-icon" style="position:static;opacity:1;display:inline-flex;">${ICONS.image}</div>
+        <h4>The album is being prepared</h4>
+        <p>Categories will appear here as soon as they're added.</p>
+      </div>`;
+    return;
+  }
+  grid.innerHTML = state.categories.map(cat => `
+    <div class="cat-card" data-cat-id="${cat.id}" tabindex="0" role="button" aria-label="Open ${escapeHtml(cat.name)}">
+      <div class="cat-bg" style="${cat.coverUrl ? `background-image:url('${cldThumb(cat.coverUrl, 500)}')` : ""}"></div>
+      <div class="cat-card-body">
+        <div class="cat-card-icon">${cat.isVideo ? ICONS.film : ICONS.image}</div>
+        <h3>${escapeHtml(cat.name)}</h3>
+        <span class="cat-count">${cat.count} ${cat.isVideo ? (cat.count === 1 ? "video" : "videos") : (cat.count === 1 ? "photo" : "photos")}</span>
+      </div>
+    </div>`).join("");
+
+  $$(".cat-card", grid).forEach(card => {
+    card.addEventListener("click", () => navigateToCategory(card.dataset.catId));
+    card.addEventListener("keypress", (e) => { if (e.key === "Enter") navigateToCategory(card.dataset.catId); });
+  });
+}
+
+function escapeHtml(s = "") {
+  return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function isVideoCategory(cat) {
+  return /all\s*videos/i.test(cat.name) || cat.isVideo === true;
+}
+
+function listenCategories() {
+  const q = query(collection(db, "categories"), orderBy("createdAt", "asc"));
+  onSnapshot(q, async (snap) => {
+    const cats = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // enrich each with a count + cover image
+    const enriched = await Promise.all(cats.map(async (cat) => {
+      const vid = isVideoCategory(cat);
+      try {
+        if (vid) {
+          const vs = await getDocs(collection(db, "videos"));
+          return { ...cat, isVideo: true, count: vs.size, coverUrl: null };
+        } else {
+          const ps = await getDocs(query(collection(db, "photos"), where("categoryId", "==", cat.id)));
+          const first = ps.docs[0]?.data();
+          return { ...cat, isVideo: false, count: ps.size, coverUrl: first?.imageUrl || null };
+        }
+      } catch (e) {
+        return { ...cat, isVideo: vid, count: 0, coverUrl: null };
+      }
+    }));
+    state.categories = enriched;
+    renderCategories();
+  }, (err) => console.error("categories listener error", err));
+}
+
+/* ============================================================
+   ROUTING (hash-based, so categories are linkable + back/forward works)
+   ============================================================ */
+function navigateToCategory(catId) { location.hash = `cat=${catId}`; }
+function navigateHome() { location.hash = ""; }
+
+window.addEventListener("hashchange", route);
+function route() {
+  const m = location.hash.match(/cat=([^&]+)/);
+  if (m) openGallery(decodeURIComponent(m[1]));
+  else showHome();
+}
+
+function showHome() {
+  $("#galleryView").classList.remove("active");
+  $("#homeView").classList.add("active");
+  detachGalleryListener();
+  window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+}
+
+$("#backToHome").addEventListener("click", navigateHome);
+
+/* ============================================================
+   GALLERY (category detail)
+   ============================================================ */
+function detachGalleryListener() {
+  if (state.galleryUnsub) { state.galleryUnsub(); state.galleryUnsub = null; }
+}
+
+function openGallery(catId) {
+  const cat = state.categories.find(c => c.id === catId);
+  state.currentCategory = cat || { id: catId, name: "Gallery" };
+  $("#homeView").classList.remove("active");
+  $("#galleryView").classList.add("active");
+  $("#galleryTitle").textContent = state.currentCategory.name;
+  $("#galleryGrid").innerHTML = "";
+  $("#galleryMeta").textContent = "Loading…";
+  $("#gallerySkeleton").style.display = "grid";
+  window.scrollTo({ top: 0, behavior: "auto" });
+
+  detachGalleryListener();
+  const vid = state.currentCategory.isVideo ?? isVideoCategory(state.currentCategory);
+
+  if (vid) {
+    const q = query(collection(db, "videos"), orderBy("uploadedAt", "desc"));
+    state.galleryUnsub = onSnapshot(q, (snap) => {
+      const items = snap.docs.map(d => ({ id: d.id, type: "video", ...d.data() }));
+      renderGallery(items);
+    });
+  } else {
+    const q = query(collection(db, "photos"), where("categoryId", "==", catId), orderBy("uploadedAt", "desc"));
+    state.galleryUnsub = onSnapshot(q, (snap) => {
+      const items = snap.docs.map(d => ({ id: d.id, type: "photo", ...d.data() }));
+      renderGallery(items);
+    }, (err) => {
+      // orderBy may need an index on first run — fall back to unordered
+      console.warn("Falling back to unordered query:", err.message);
+      const q2 = query(collection(db, "photos"), where("categoryId", "==", catId));
+      state.galleryUnsub = onSnapshot(q2, (snap) => {
+        const items = snap.docs.map(d => ({ id: d.id, type: "photo", ...d.data() }));
+        renderGallery(items);
+      });
+    });
+  }
+}
+
+function renderGallery(items) {
+  state.galleryItems = items;
+  $("#gallerySkeleton").style.display = "none";
+  $("#galleryMeta").textContent = `${items.length} ${items.length === 1 ? "memory" : "memories"}`;
+
+  const grid = $("#galleryGrid");
+  if (!items.length) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1;">
+        ${ICONS.image}
+        <h4>Nothing here yet</h4>
+        <p>Check back soon — this part of the story is still being written.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map((item, i) => {
+    const isVid = item.type === "video";
+    const thumbSrc = isVid ? cldVideoPoster(item.videoUrl) : cldThumb(item.imageUrl, 300);
+    return `
+    <div class="thumb ${isVid ? "is-video" : ""}" data-index="${i}">
+      <img src="${thumbSrc}" alt="" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
+      ${!isVid && item.downloads ? `<span class="dl-badge">${ICONS.download.replace('viewBox="0 0 24 24"','viewBox="0 0 24 24" style="width:10px;height:10px"')} ${item.downloads}</span>` : ""}
+    </div>`;
+  }).join("");
+
+  $$(".thumb", grid).forEach(el => el.addEventListener("click", () => openLightbox(Number(el.dataset.index))));
+}
+
+/* ============================================================
+   LIGHTBOX
+   ============================================================ */
+function openLightbox(index) {
+  state.lightboxIndex = index;
+  renderLightbox();
+  openModalRaw("#lightbox");
+}
+function openModalRaw(sel) { $(sel).classList.add("open"); document.body.style.overflow = "hidden"; }
+function closeLightbox() {
+  $("#lightbox").classList.remove("open");
+  document.body.style.overflow = "";
+  $("#lightboxMedia").innerHTML = "";
+}
+$("#lightboxClose").addEventListener("click", closeLightbox);
+$("#lightbox").addEventListener("click", (e) => { if (e.target.id === "lightbox") closeLightbox(); });
+$("#lightboxPrev").addEventListener("click", () => stepLightbox(-1));
+$("#lightboxNext").addEventListener("click", () => stepLightbox(1));
+document.addEventListener("keydown", (e) => {
+  if (!$("#lightbox").classList.contains("open")) return;
+  if (e.key === "Escape") closeLightbox();
+  if (e.key === "ArrowLeft") stepLightbox(-1);
+  if (e.key === "ArrowRight") stepLightbox(1);
+});
+
+function stepLightbox(dir) {
+  const len = state.galleryItems.length;
+  if (!len) return;
+  state.lightboxIndex = (state.lightboxIndex + dir + len) % len;
+  if (window._lbResetZoom) window._lbResetZoom();
+  renderLightbox();
+}
+
+function renderLightbox() {
+  const item = state.galleryItems[state.lightboxIndex];
+  if (!item) return;
+  const isVid = item.type === "video";
+  $("#lightboxMedia").innerHTML = isVid
+    ? `<video src="${item.videoUrl}" controls autoplay playsinline></video>`
+    : `<img src="${cldFull(item.imageUrl)}" alt="">`;
+  $("#lightboxCounter").textContent = `${state.lightboxIndex + 1} / ${state.galleryItems.length}`;
+}
+
+// Swipe + natural pinch-zoom for lightbox (like native gallery)
+(function enableTouchGestures() {
+  const media = $("#lightboxMedia");
+
+  // Current transform state stored as pan + scale
+  var curScale = 1;
+  var panX = 0, panY = 0;
+  var startPanX = 0, startPanY = 0;
+
+  // Pinch state
+  var pinchStartScale = 1;
+  var pinchStartDist = 0;
+  var pinchMidX = 0, pinchMidY = 0;
+  var pinchStartPanX = 0, pinchStartPanY = 0;
+  var focalNatX = 0, focalNatY = 0; // focal point in image natural (untransformed) coords
+
+  // Swipe / pan state
+  var t1x = 0, t1y = 0;            // touch-1 start position
+  var gestureType = "none";         // "swipe" | "pan" | "pinch"
+  var lastTap = 0;
+
+  function getImg() { return media.querySelector("img"); }
+
+  function commit(img) {
+    if (!img) return;
+    // Always use top-left origin so translate+scale math is consistent
+    img.style.transformOrigin = "0 0";
+    img.style.transform = "translate(" + panX + "px," + panY + "px) scale(" + curScale + ")";
+    img.style.transition = "none";
+  }
+
+  function resetZoom() {
+    curScale = 1; panX = 0; panY = 0;
+    var img = getImg();
+    if (img) { img.style.transform = ""; img.style.transition = "transform .25s ease"; }
+    gestureType = "none";
+  }
+  window._lbResetZoom = resetZoom;
+
+  function dist2(ta) {
+    var dx = ta[0].clientX - ta[1].clientX;
+    var dy = ta[0].clientY - ta[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  media.addEventListener("touchstart", function(e) {
+    var img = getImg();
+    if (!img) return;
+
+    if (e.touches.length === 2) {
+      // Begin pinch — record focal point in image-natural coords
+      gestureType = "pinch";
+      pinchStartScale = curScale;
+      pinchStartDist = dist2(e.touches);
+      pinchMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      pinchMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      pinchStartPanX = panX;
+      pinchStartPanY = panY;
+      // Focal point in image natural coords (origin = top-left of image element)
+      var imgRect2 = img.getBoundingClientRect();
+      // current visible top-left is at (imgRect2.left, imgRect2.top) in viewport
+      // but we apply transform from origin 0,0 of the *untransformed* element
+      // image natural top-left (in viewport) = imgRect2.left (before transform added panX*scale etc)
+      // natural focal: focalNatX = (pinchMidX - panX) / pinchStartScale  (relative to img natural 0,0)
+      focalNatX = (pinchMidX - panX) / pinchStartScale;
+      focalNatY = (pinchMidY - panY) / pinchStartScale;
+    } else if (e.touches.length === 1) {
+      t1x = e.touches[0].clientX;
+      t1y = e.touches[0].clientY;
+      startPanX = panX;
+      startPanY = panY;
+      gestureType = curScale > 1 ? "pan" : "swipe";
+    }
+  }, { passive: true });
+
+  media.addEventListener("touchmove", function(e) {
+    var img = getImg();
+    if (!img) return;
+
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      gestureType = "pinch";
+
+      // Scale relative to pinch-start — smooth, no jumps
+      var newDist = dist2(e.touches);
+      curScale = Math.min(Math.max(pinchStartScale * (newDist / pinchStartDist), 1), 6);
+
+      // Pan so the focal point stays under the fingers
+      var newMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      var newMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      // focalNatX * curScale + panX = newMidX  →  panX = newMidX - focalNatX * curScale
+      panX = newMidX - focalNatX * curScale;
+      panY = newMidY - focalNatY * curScale;
+
+      commit(img);
+    } else if (e.touches.length === 1 && gestureType === "pan") {
+      e.preventDefault();
+      panX = startPanX + (e.touches[0].clientX - t1x);
+      panY = startPanY + (e.touches[0].clientY - t1y);
+      commit(img);
+    }
+  }, { passive: false });
+
+  media.addEventListener("touchend", function(e) {
+    if (gestureType === "pinch") {
+      if (curScale <= 1.05) resetZoom();
+      gestureType = "none";
+      return;
+    }
+
+    // Double-tap to reset zoom
+    var now = Date.now();
+    if (now - lastTap < 300) { resetZoom(); lastTap = 0; return; }
+    lastTap = now;
+
+    if (gestureType === "pan") { gestureType = "none"; return; }
+
+    // Swipe to next/prev (only when not zoomed)
+    if (curScale <= 1 && e.changedTouches.length) {
+      var dx = e.changedTouches[0].clientX - t1x;
+      var dy = e.changedTouches[0].clientY - t1y;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) stepLightbox(dx > 0 ? -1 : 1);
+    }
+    gestureType = "none";
+  }, { passive: true });
+})();
+
+/* ============================================================
+   DOWNLOAD (requires Google sign-in)
+   ============================================================ */
+$("#lightboxDownload").addEventListener("click", () => {
+  const item = state.galleryItems[state.lightboxIndex];
+  if (!item) return;
+  if (!state.user) {
+    state.pendingDownload = item;
+    openModal("#loginModal");
+    return;
+  }
+  performDownload(item);
+});
+
+async function performDownload(item) {
+  try {
+    const isVid = item.type === "video";
+    const url = isVid ? item.videoUrl : cldDownload(item.imageUrl);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "";
+    a.target = "_blank";
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    if (!isVid) {
+      await updateDoc(doc(db, "photos", item.id), { downloads: increment(1) });
+      if (state.user) {
+        await setDoc(doc(db, "users", state.user.uid), {
+          downloadedPhotos: arrayUnion(item.id)
+        }, { merge: true });
+      }
+    }
+    toast("Download started ♡");
+  } catch (e) {
+    console.error(e);
+    toast("Couldn't start the download — please try again");
+  }
+}
+
+/* ============================================================
+   RANDOM SLIDESHOW
+   ============================================================ */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startSlideshow() {
+  const frame = $("#ssInner");
+  if (!frame) return;
+  if (!state.allPhotos.length) {
+    frame.innerHTML = "";
+    return;
+  }
+  // Use a good-quality thumbnail for slideshow — large but NOT original (saves bandwidth)
+  state.slideshowOrder = shuffle(state.allPhotos).slice(0, Math.min(14, state.allPhotos.length));
+  state.slideshowPos = 0;
+
+  frame.innerHTML = state.slideshowOrder.map((p, i) =>
+    `<img src="${cldThumb(p.imageUrl, 1200)}" alt="" loading="${i === 0 ? "eager" : "lazy"}">`).join("");
+  $("#ssDots").innerHTML = state.slideshowOrder.map(() => `<span></span>`).join("");
+
+  showSlide(0);
+  clearInterval(state.slideshowTimer);
+  state.slideshowTimer = setInterval(() => {
+    state.slideshowPos = (state.slideshowPos + 1) % state.slideshowOrder.length;
+    showSlide(state.slideshowPos);
+  }, 3500);
+}
+function showSlide(pos) {
+  $$("#ssInner img").forEach((img, i) => img.classList.toggle("active", i === pos));
+  $$("#ssDots span").forEach((d, i) => d.classList.toggle("active", i === pos));
+}
+
+/* Search removed — categories browsed directly */
+
+/* ============================================================
+   GLOBAL DATA CACHE (search index + slideshow source)
+   ============================================================ */
+function listenAllPhotos() {
+  onSnapshot(collection(db, "photos"), (snap) => {
+    state.allPhotos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (!state.slideshowTimer) startSlideshow();
+  }, (err) => console.error("photo cache listener error", err));
+}
+
+/* ============================================================
+   SHARE
+   ============================================================ */
+$$("[data-share]").forEach(btn => btn.addEventListener("click", async () => {
+  const shareData = {
+    title: "Dilum & Thilini — Our Wedding Album",
+    text: "Take a look at the most important moments of our life together 🤍",
+    url: location.origin + location.pathname
+  };
+  if (navigator.share) {
+    try { await navigator.share(shareData); } catch (e) { /* cancelled */ }
+  } else {
+    await navigator.clipboard.writeText(shareData.url);
+    toast("Link copied to clipboard");
+  }
+}));
+
+/* ============================================================
+   PWA
+   ============================================================ */
+// sw.js not used in self-contained mode
+
+/* ============================================================
+   INIT
+   ============================================================ */
+listenCategories();
+listenAllPhotos();
+route();
+
+</script>
 </body>
 </html>
