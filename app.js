@@ -367,6 +367,7 @@ function stepLightbox(dir) {
   const len = state.galleryItems.length;
   if (!len) return;
   state.lightboxIndex = (state.lightboxIndex + dir + len) % len;
+  if (window._lbResetZoom) window._lbResetZoom();
   renderLightbox();
 }
 
@@ -380,14 +381,85 @@ function renderLightbox() {
   $("#lightboxCounter").textContent = `${state.lightboxIndex + 1} / ${state.galleryItems.length}`;
 }
 
-// basic swipe support on mobile
-(function enableSwipe() {
-  let startX = 0;
+// Swipe + pinch-zoom for lightbox
+(function enableTouchGestures() {
   const media = $("#lightboxMedia");
-  media.addEventListener("touchstart", (e) => startX = e.touches[0].clientX, { passive: true });
-  media.addEventListener("touchend", (e) => {
-    const dx = e.changedTouches[0].clientX - startX;
-    if (Math.abs(dx) > 50) stepLightbox(dx > 0 ? -1 : 1);
+  let startX = 0, startY = 0;
+  let lastDist = 0;
+  let scale = 1;
+  let translateX = 0, translateY = 0;
+  let originX = 50, originY = 50;
+  let isDragging = false, dragStartX = 0, dragStartY = 0;
+  let isPinching = false;
+
+  function getImg() { return media.querySelector("img"); }
+
+  function applyTransform(img) {
+    if (!img) return;
+    img.style.transformOrigin = originX + "% " + originY + "%";
+    img.style.transform = "scale(" + scale + ") translate(" + (translateX / scale) + "px, " + (translateY / scale) + "px)";
+    img.style.transition = "none";
+  }
+
+  function resetZoom() {
+    scale = 1; translateX = 0; translateY = 0; originX = 50; originY = 50;
+    const img = getImg();
+    if (img) { img.style.transform = ""; img.style.transformOrigin = ""; img.style.transition = ""; }
+  }
+  window._lbResetZoom = resetZoom;
+
+  function getDist(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  media.addEventListener("touchstart", function(e) {
+    if (e.touches.length === 2) {
+      isPinching = true;
+      lastDist = getDist(e.touches);
+      const rect = media.getBoundingClientRect();
+      const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      originX = ((cx - rect.left) / rect.width) * 100;
+      originY = ((cy - rect.top) / rect.height) * 100;
+    } else if (e.touches.length === 1) {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      if (scale > 1) { isDragging = true; dragStartX = startX - translateX; dragStartY = startY - translateY; }
+    }
+  }, { passive: true });
+
+  media.addEventListener("touchmove", function(e) {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      isPinching = true;
+      const dist = getDist(e.touches);
+      scale = Math.min(Math.max(scale * (dist / lastDist), 1), 5);
+      lastDist = dist;
+      applyTransform(getImg());
+    } else if (e.touches.length === 1 && isDragging && scale > 1) {
+      e.preventDefault();
+      translateX = e.touches[0].clientX - dragStartX;
+      translateY = e.touches[0].clientY - dragStartY;
+      applyTransform(getImg());
+    }
+  }, { passive: false });
+
+  var lastTap = 0;
+  media.addEventListener("touchend", function(e) {
+    if (e.touches.length > 0) return;
+    // double-tap resets zoom
+    var now = Date.now();
+    if (now - lastTap < 300) { resetZoom(); lastTap = 0; return; }
+    lastTap = now;
+
+    if (isPinching) { if (scale <= 1.05) resetZoom(); isPinching = false; isDragging = false; return; }
+    isDragging = false;
+    if (scale > 1) return; // don't swipe while zoomed in
+    var dx = e.changedTouches[0].clientX - startX;
+    var dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) stepLightbox(dx > 0 ? -1 : 1);
   }, { passive: true });
 })();
 
@@ -446,67 +518,33 @@ function shuffle(arr) {
 }
 
 function startSlideshow() {
-  const frame = $("#memoryFrameInner");
+  const frame = $("#ssInner");
+  if (!frame) return;
   if (!state.allPhotos.length) {
-    frame.innerHTML = `<div class="placeholder">Your memories<br>will glow here soon</div>`;
-    $("#memoryDots").innerHTML = "";
+    frame.innerHTML = "";
     return;
   }
-  state.slideshowOrder = shuffle(state.allPhotos).slice(0, Math.min(10, state.allPhotos.length));
+  // Use a good-quality thumbnail for slideshow — large but NOT original (saves bandwidth)
+  state.slideshowOrder = shuffle(state.allPhotos).slice(0, Math.min(14, state.allPhotos.length));
   state.slideshowPos = 0;
 
   frame.innerHTML = state.slideshowOrder.map((p, i) =>
-    `<img src="${cldThumb(p.imageUrl, 600)}" alt="" loading="${i === 0 ? "eager" : "lazy"}">`).join("");
-  $("#memoryDots").innerHTML = state.slideshowOrder.map((_, i) => `<span></span>`).join("");
+    `<img src="${cldThumb(p.imageUrl, 1200)}" alt="" loading="${i === 0 ? "eager" : "lazy"}">`).join("");
+  $("#ssDots").innerHTML = state.slideshowOrder.map(() => `<span></span>`).join("");
 
   showSlide(0);
   clearInterval(state.slideshowTimer);
   state.slideshowTimer = setInterval(() => {
     state.slideshowPos = (state.slideshowPos + 1) % state.slideshowOrder.length;
     showSlide(state.slideshowPos);
-  }, 3000);
+  }, 3500);
 }
 function showSlide(pos) {
-  $$("#memoryFrameInner img").forEach((img, i) => img.classList.toggle("active", i === pos));
-  $$("#memoryDots span").forEach((d, i) => d.classList.toggle("active", i === pos));
+  $$("#ssInner img").forEach((img, i) => img.classList.toggle("active", i === pos));
+  $$("#ssDots span").forEach((d, i) => d.classList.toggle("active", i === pos));
 }
 
-/* ============================================================
-   SEARCH (across category names + photo filenames)
-   ============================================================ */
-let searchTimer = null;
-$("#searchInput").addEventListener("input", (e) => {
-  clearTimeout(searchTimer);
-  const v = e.target.value.trim();
-  searchTimer = setTimeout(() => runSearch(v), 220);
-});
-
-function runSearch(term) {
-  if (!term) { renderCategories(); return; }
-  const low = term.toLowerCase();
-
-  const matchedCatIds = new Set(
-    state.allPhotos.filter(p => (p.publicId || "").toLowerCase().includes(low)).map(p => p.categoryId)
-  );
-  const filtered = state.categories.filter(c =>
-    c.name.toLowerCase().includes(low) || matchedCatIds.has(c.id)
-  );
-
-  const grid = $("#categoryGrid");
-  if (!filtered.length) {
-    grid.innerHTML = `
-      <div class="empty-state" style="grid-column:1/-1;">
-        ${ICONS.search}
-        <h4>No moments found</h4>
-        <p>Try a different word, or browse all categories below.</p>
-      </div>`;
-    return;
-  }
-  const original = state.categories;
-  state.categories = filtered;
-  renderCategories();
-  state.categories = original;
-}
+/* Search removed — categories browsed directly */
 
 /* ============================================================
    GLOBAL DATA CACHE (search index + slideshow source)
