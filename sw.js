@@ -2,7 +2,7 @@
 // and the shell loads instantly on repeat visits. Photo/video data
 // always goes to the network so the album stays up to date.
 
-const CACHE_NAME = "dt-album-shell-v3";
+const CACHE_NAME = "dt-album-shell-v4";
 const SHELL_FILES = [
   "./",
   "./index.html",
