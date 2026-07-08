@@ -15,8 +15,8 @@
 
 <!-- PWA -->
 <link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" href="./icons/icon192.png">
-<link rel="icon" href="./icons/icon192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="icon" href="./icons/icon-192.png">
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,8 +56,8 @@
 
   <!-- Hero -->
   <section class="hero">
-    <video autoplay muted loop playsinline>
-      <source src="https://res.cloudinary.com/dzta29win/video/upload/f_auto,q_auto/v1782745325/Myalbum/kjsw8twsn8stolwtnrzh.mp4" type="video/mp4">
+    <video autoplay muted loop playsinline poster="./cover.jpg">
+      <source src="./video.mp4" type="video/mp4">
     </video>
     <div class="hero-content">
       <p class="hero-eyebrow">A love story, captured</p>
@@ -69,31 +69,19 @@
     </div>
   </section>
 
-  <!-- Random memory slideshow -->
-  <section class="memories">
-    <div class="section-head">
-      <p class="eyebrow">Glimpses</p>
-      <h2 class="section-title">Moments We Treasure</h2>
-      <p class="section-sub">A few frames, chosen at random, from everything we've shared so far.</p>
+  <!-- Full-screen auto slideshow -->
+  <section class="ss-section">
+    <div class="ss-inner" id="ssInner"></div>
+    <div class="ss-overlay">
+      <p class="eyebrow" style="color:rgba(255,255,255,.85)">Glimpses</p>
+      <h2 class="ss-title">Moments We Treasure</h2>
+      <p class="ss-sub">A few frames, chosen at random, from everything we've shared so far.</p>
     </div>
-    <div class="memory-frame">
-      <div class="memory-frame-inner" id="memoryFrameInner">
-        <div class="placeholder">Your memories<br>will glow here soon</div>
-      </div>
-    </div>
-    <div class="memory-dots" id="memoryDots"></div>
+    <div class="ss-dots" id="ssDots"></div>
   </section>
 
-  <div class="flourish-divider">
+  <div class="flourish-divider" style="margin:2rem auto">
     <svg viewBox="0 0 340 18"><line x1="0" y1="9" x2="145" y2="9" stroke="var(--color-gold)" stroke-width="1"/><circle cx="170" cy="9" r="4" fill="none" stroke="var(--color-rose-gold)" stroke-width="1.2"/><line x1="195" y1="9" x2="340" y2="9" stroke="var(--color-gold)" stroke-width="1"/></svg>
-  </div>
-
-  <!-- Search -->
-  <div class="search-wrap">
-    <div class="search-box">
-      <span data-icon="search" style="width:17px;height:17px;color:var(--color-rose-gold)"></span>
-      <input id="searchInput" type="text" placeholder="Search a moment… e.g. Wedding day 1" aria-label="Search photos">
-    </div>
   </div>
 
   <!-- Categories -->
