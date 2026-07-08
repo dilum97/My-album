@@ -86,7 +86,8 @@ const ICONS = {
   share: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8.1 10.7l7.8-4.4M8.1 13.3l7.8 4.4"/></svg>`,
   up: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>`,
   image: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M3 17l5-5 4 4 5-6 4 5"/></svg>`,
-  film: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4"/></svg>`
+  film: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4"/></svg>`,
+  person: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`
 };
 $$("[data-icon]").forEach(el => { el.innerHTML = ICONS[el.dataset.icon] || ""; });
 
@@ -144,7 +145,7 @@ onAuthStateChanged(auth, async (user) => {
       performDownload(item);
     }
   } else {
-    chip.innerHTML = `<button class="icon-btn" id="loginIconBtn" aria-label="Sign in">${ICONS.image}</button>`;
+    chip.innerHTML = ICONS.person;
     chip.classList.remove("user-chip");
     chip.classList.add("icon-btn");
   }
@@ -381,85 +382,120 @@ function renderLightbox() {
   $("#lightboxCounter").textContent = `${state.lightboxIndex + 1} / ${state.galleryItems.length}`;
 }
 
-// Swipe + pinch-zoom for lightbox
+// Swipe + natural pinch-zoom for lightbox (like native gallery)
 (function enableTouchGestures() {
   const media = $("#lightboxMedia");
-  let startX = 0, startY = 0;
-  let lastDist = 0;
-  let scale = 1;
-  let translateX = 0, translateY = 0;
-  let originX = 50, originY = 50;
-  let isDragging = false, dragStartX = 0, dragStartY = 0;
-  let isPinching = false;
+
+  // Current transform state stored as pan + scale
+  var curScale = 1;
+  var panX = 0, panY = 0;          // accumulated pan in CSS-px
+  var startPanX = 0, startPanY = 0; // pan at the moment a new gesture starts
+
+  // Pinch state
+  var pinchStartScale = 1;
+  var pinchStartDist = 0;
+  var pinchMidX = 0, pinchMidY = 0; // midpoint of two fingers at pinch start (page coords)
+  var pinchStartPanX = 0, pinchStartPanY = 0;
+
+  // Swipe / pan state
+  var t1x = 0, t1y = 0;            // touch-1 start position
+  var gestureType = "none";         // "swipe" | "pan" | "pinch"
+  var lastTap = 0;
 
   function getImg() { return media.querySelector("img"); }
 
-  function applyTransform(img) {
+  function commit(img) {
     if (!img) return;
-    img.style.transformOrigin = originX + "% " + originY + "%";
-    img.style.transform = "scale(" + scale + ") translate(" + (translateX / scale) + "px, " + (translateY / scale) + "px)";
+    img.style.transform = "translate(" + panX + "px," + panY + "px) scale(" + curScale + ")";
+    img.style.transformOrigin = "center center";
     img.style.transition = "none";
   }
 
   function resetZoom() {
-    scale = 1; translateX = 0; translateY = 0; originX = 50; originY = 50;
-    const img = getImg();
-    if (img) { img.style.transform = ""; img.style.transformOrigin = ""; img.style.transition = ""; }
+    curScale = 1; panX = 0; panY = 0;
+    var img = getImg();
+    if (img) { img.style.transform = ""; img.style.transition = "transform .25s ease"; }
+    gestureType = "none";
   }
   window._lbResetZoom = resetZoom;
 
-  function getDist(touches) {
-    const dx = touches[0].clientX - touches[1].clientX;
-    const dy = touches[0].clientY - touches[1].clientY;
+  function dist2(ta) {
+    var dx = ta[0].clientX - ta[1].clientX;
+    var dy = ta[0].clientY - ta[1].clientY;
     return Math.sqrt(dx * dx + dy * dy);
   }
 
   media.addEventListener("touchstart", function(e) {
+    var img = getImg();
+    if (!img) return;
+
     if (e.touches.length === 2) {
-      isPinching = true;
-      lastDist = getDist(e.touches);
-      const rect = media.getBoundingClientRect();
-      const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-      const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-      originX = ((cx - rect.left) / rect.width) * 100;
-      originY = ((cy - rect.top) / rect.height) * 100;
+      // Begin pinch
+      gestureType = "pinch";
+      pinchStartScale = curScale;
+      pinchStartDist = dist2(e.touches);
+      pinchMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      pinchMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      pinchStartPanX = panX;
+      pinchStartPanY = panY;
     } else if (e.touches.length === 1) {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      if (scale > 1) { isDragging = true; dragStartX = startX - translateX; dragStartY = startY - translateY; }
+      t1x = e.touches[0].clientX;
+      t1y = e.touches[0].clientY;
+      startPanX = panX;
+      startPanY = panY;
+      gestureType = curScale > 1 ? "pan" : "swipe";
     }
   }, { passive: true });
 
   media.addEventListener("touchmove", function(e) {
+    var img = getImg();
+    if (!img) return;
+
     if (e.touches.length === 2) {
       e.preventDefault();
-      isPinching = true;
-      const dist = getDist(e.touches);
-      scale = Math.min(Math.max(scale * (dist / lastDist), 1), 5);
-      lastDist = dist;
-      applyTransform(getImg());
-    } else if (e.touches.length === 1 && isDragging && scale > 1) {
+      gestureType = "pinch";
+
+      // Scale relative to pinch-start (smooth, no jumps)
+      var newDist = dist2(e.touches);
+      var ratio = newDist / pinchStartDist;
+      curScale = Math.min(Math.max(pinchStartScale * ratio, 1), 6);
+
+      // Keep the midpoint of the two fingers stationary as we scale
+      var newMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      var newMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      panX = pinchStartPanX + (newMidX - pinchMidX);
+      panY = pinchStartPanY + (newMidY - pinchMidY);
+
+      commit(img);
+    } else if (e.touches.length === 1 && gestureType === "pan") {
       e.preventDefault();
-      translateX = e.touches[0].clientX - dragStartX;
-      translateY = e.touches[0].clientY - dragStartY;
-      applyTransform(getImg());
+      panX = startPanX + (e.touches[0].clientX - t1x);
+      panY = startPanY + (e.touches[0].clientY - t1y);
+      commit(img);
     }
   }, { passive: false });
 
-  var lastTap = 0;
   media.addEventListener("touchend", function(e) {
-    if (e.touches.length > 0) return;
-    // double-tap resets zoom
+    if (gestureType === "pinch") {
+      if (curScale <= 1.05) resetZoom();
+      gestureType = "none";
+      return;
+    }
+
+    // Double-tap to reset zoom
     var now = Date.now();
     if (now - lastTap < 300) { resetZoom(); lastTap = 0; return; }
     lastTap = now;
 
-    if (isPinching) { if (scale <= 1.05) resetZoom(); isPinching = false; isDragging = false; return; }
-    isDragging = false;
-    if (scale > 1) return; // don't swipe while zoomed in
-    var dx = e.changedTouches[0].clientX - startX;
-    var dy = e.changedTouches[0].clientY - startY;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) stepLightbox(dx > 0 ? -1 : 1);
+    if (gestureType === "pan") { gestureType = "none"; return; }
+
+    // Swipe to next/prev (only when not zoomed)
+    if (curScale <= 1 && e.changedTouches.length) {
+      var dx = e.changedTouches[0].clientX - t1x;
+      var dy = e.changedTouches[0].clientY - t1y;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) stepLightbox(dx > 0 ? -1 : 1);
+    }
+    gestureType = "none";
   }, { passive: true });
 })();
 
