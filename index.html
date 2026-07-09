@@ -723,8 +723,8 @@ footer p{ color: var(--text-muted); font-size:.85rem; }
   touch-action: none;
   will-change: transform;
   cursor: zoom-in;
-  max-width: 46vw;
-  max-height: 40vh;
+  max-width: 92vw;
+  max-height: 80vh;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -1313,7 +1313,7 @@ function renderLightbox() {
   const slider = $("#zoomSlider");
   const zoomVal = $("#zoomVal");
 
-  var curScale = 1;
+  var curScale = 0;
   var panX = 0, panY = 0;
 
   function getImg() { return media.querySelector("img"); }
