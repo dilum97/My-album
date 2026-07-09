@@ -725,12 +725,43 @@ footer p{ color: var(--text-muted); font-size:.85rem; }
   cursor: zoom-in;
   max-width: 92vw;
   max-height: 80vh;
+  user-select: none;
+  -webkit-user-select: none;
 }
-.lightbox-media img[style*="scale"] {
+.lightbox-media img.zoomed {
   cursor: grab;
   max-width: none;
   max-height: none;
 }
+.lightbox-media img.dragging { cursor: grabbing; }
+
+/* Zoom slider bar */
+.lb-zoom-bar {
+  position: absolute;
+  bottom: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  background: rgba(20,12,11,.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: .45rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  white-space: nowrap;
+}
+.lb-zoom-label { color: rgba(255,255,255,.6); font-size: .72rem; }
+.lb-zoom-val   { color: var(--color-gold-light); font-size: .78rem; font-weight:500; min-width:30px; }
+#zoomSlider {
+  width: 130px;
+  accent-color: var(--color-gold);
+  cursor: pointer;
+  height: 4px;
+}
+@media (max-width: 480px) { #zoomSlider { width: 90px; } .lb-zoom-bar { padding: .4rem .8rem; } }
 
 </style>
 </head>
@@ -839,6 +870,11 @@ footer p{ color: var(--text-muted); font-size:.85rem; }
   </button>
   <div class="lightbox-media" id="lightboxMedia"></div>
   <div class="lb-counter" id="lightboxCounter"></div>
+  <div class="lb-zoom-bar" id="lbZoomBar">
+    <span class="lb-zoom-label">1×</span>
+    <input type="range" id="zoomSlider" min="1" max="10" step="0.1" value="1">
+    <span class="lb-zoom-val" id="zoomVal">1×</span>
+  </div>
 </div>
 
 <!-- ============ LOGIN MODAL ============ -->
@@ -1272,129 +1308,114 @@ function renderLightbox() {
 }
 
 // Swipe + natural pinch-zoom for lightbox (like native gallery)
-(function enableTouchGestures() {
+(function enableZoomAndPan() {
   const media = $("#lightboxMedia");
+  const slider = $("#zoomSlider");
+  const zoomVal = $("#zoomVal");
 
-  // Current transform state stored as pan + scale
   var curScale = 1;
   var panX = 0, panY = 0;
-  var startPanX = 0, startPanY = 0;
-
-  // Pinch state
-  var pinchStartScale = 1;
-  var pinchStartDist = 0;
-  var pinchMidX = 0, pinchMidY = 0;
-  var pinchStartPanX = 0, pinchStartPanY = 0;
-  var focalNatX = 0, focalNatY = 0; // focal point in image natural (untransformed) coords
-
-  // Swipe / pan state
-  var t1x = 0, t1y = 0;            // touch-1 start position
-  var gestureType = "none";         // "swipe" | "pan" | "pinch"
-  var lastTap = 0;
 
   function getImg() { return media.querySelector("img"); }
 
+  function applyScale(newScale, focalVX, focalVY) {
+    // focalVX/Y = viewport point that should stay fixed during zoom
+    newScale = Math.min(Math.max(newScale, 1), 10);
+    // Compute where that focal point is in image-natural coords
+    var fNatX = (focalVX - panX) / curScale;
+    var fNatY = (focalVY - panY) / curScale;
+    // After scale change, adjust pan so focal point stays at same viewport position
+    panX = focalVX - fNatX * newScale;
+    panY = focalVY - fNatY * newScale;
+    curScale = newScale;
+    slider.value = curScale;
+    zoomVal.textContent = (curScale % 1 === 0 ? curScale : curScale.toFixed(1)) + "×";
+    commit(getImg());
+  }
+
+  function setScaleCenter(newScale) {
+    var r = media.getBoundingClientRect();
+    applyScale(newScale, r.left + r.width / 2, r.top + r.height / 2);
+  }
+
   function commit(img) {
     if (!img) return;
-    // Always use top-left origin so translate+scale math is consistent
     img.style.transformOrigin = "0 0";
-    img.style.transform = "translate(" + panX + "px," + panY + "px) scale(" + curScale + ")";
+    img.style.transform = "translate(" + Math.round(panX) + "px," + Math.round(panY) + "px) scale(" + curScale + ")";
     img.style.transition = "none";
+    img.classList.toggle("zoomed", curScale > 1);
   }
 
   function resetZoom() {
     curScale = 1; panX = 0; panY = 0;
+    if (slider) slider.value = 1;
+    if (zoomVal) zoomVal.textContent = "1×";
     var img = getImg();
-    if (img) { img.style.transform = ""; img.style.transition = "transform .25s ease"; }
-    gestureType = "none";
+    if (img) { img.style.transform = ""; img.style.transition = "transform .2s ease"; img.classList.remove("zoomed", "dragging"); }
   }
   window._lbResetZoom = resetZoom;
 
-  function dist2(ta) {
-    var dx = ta[0].clientX - ta[1].clientX;
-    var dy = ta[0].clientY - ta[1].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
+  // ── Slider ───────────────────────────────────────────────
+  slider.addEventListener("input", function() {
+    setScaleCenter(parseFloat(this.value));
+  });
+
+  // ── Mouse wheel (desktop) ────────────────────────────────
+  media.addEventListener("wheel", function(e) {
+    e.preventDefault();
+    applyScale(curScale + (e.deltaY < 0 ? 0.25 : -0.25), e.clientX, e.clientY);
+  }, { passive: false });
+
+  // ── Mouse drag to pan (desktop) ──────────────────────────
+  var mdrag = false, msx = 0, msy = 0, mpx = 0, mpy = 0;
+  media.addEventListener("mousedown", function(e) {
+    if (e.button !== 0) return;
+    mdrag = true; msx = e.clientX; msy = e.clientY; mpx = panX; mpy = panY;
+    var img = getImg(); if (img) img.classList.add("dragging");
+    e.preventDefault();
+  });
+  window.addEventListener("mousemove", function(e) {
+    if (!mdrag) return;
+    panX = mpx + (e.clientX - msx); panY = mpy + (e.clientY - msy);
+    commit(getImg());
+  });
+  window.addEventListener("mouseup", function() {
+    mdrag = false;
+    var img = getImg(); if (img) img.classList.remove("dragging");
+  });
+
+  // ── Touch: swipe nav or single-finger pan ────────────────
+  var t1x = 0, t1y = 0, tpx = 0, tpy = 0;
+  var tMode = "none", lastTap = 0;
 
   media.addEventListener("touchstart", function(e) {
-    var img = getImg();
-    if (!img) return;
-
-    if (e.touches.length === 2) {
-      // Begin pinch — record focal point in image-natural coords
-      gestureType = "pinch";
-      pinchStartScale = curScale;
-      pinchStartDist = dist2(e.touches);
-      pinchMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-      pinchMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-      pinchStartPanX = panX;
-      pinchStartPanY = panY;
-      // Focal point in image natural coords (origin = top-left of image element)
-      var imgRect2 = img.getBoundingClientRect();
-      // current visible top-left is at (imgRect2.left, imgRect2.top) in viewport
-      // but we apply transform from origin 0,0 of the *untransformed* element
-      // image natural top-left (in viewport) = imgRect2.left (before transform added panX*scale etc)
-      // natural focal: focalNatX = (pinchMidX - panX) / pinchStartScale  (relative to img natural 0,0)
-      focalNatX = (pinchMidX - panX) / pinchStartScale;
-      focalNatY = (pinchMidY - panY) / pinchStartScale;
-    } else if (e.touches.length === 1) {
-      t1x = e.touches[0].clientX;
-      t1y = e.touches[0].clientY;
-      startPanX = panX;
-      startPanY = panY;
-      gestureType = curScale > 1 ? "pan" : "swipe";
-    }
+    if (e.touches.length === 1) {
+      t1x = e.touches[0].clientX; t1y = e.touches[0].clientY;
+      tpx = panX; tpy = panY;
+      tMode = curScale > 1 ? "pan" : "swipe";
+    } else { tMode = "none"; }
   }, { passive: true });
 
   media.addEventListener("touchmove", function(e) {
-    var img = getImg();
-    if (!img) return;
-
-    if (e.touches.length === 2) {
+    if (tMode === "pan" && e.touches.length === 1) {
       e.preventDefault();
-      gestureType = "pinch";
-
-      // Scale relative to pinch-start — smooth, no jumps
-      var newDist = dist2(e.touches);
-      curScale = Math.min(Math.max(pinchStartScale * (newDist / pinchStartDist), 1), 6);
-
-      // Pan so the focal point stays under the fingers
-      var newMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-      var newMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-      // focalNatX * curScale + panX = newMidX  →  panX = newMidX - focalNatX * curScale
-      panX = newMidX - focalNatX * curScale;
-      panY = newMidY - focalNatY * curScale;
-
-      commit(img);
-    } else if (e.touches.length === 1 && gestureType === "pan") {
-      e.preventDefault();
-      panX = startPanX + (e.touches[0].clientX - t1x);
-      panY = startPanY + (e.touches[0].clientY - t1y);
-      commit(img);
+      panX = tpx + (e.touches[0].clientX - t1x);
+      panY = tpy + (e.touches[0].clientY - t1y);
+      commit(getImg());
     }
   }, { passive: false });
 
   media.addEventListener("touchend", function(e) {
-    if (gestureType === "pinch") {
-      if (curScale <= 1.05) resetZoom();
-      gestureType = "none";
-      return;
-    }
-
-    // Double-tap to reset zoom
     var now = Date.now();
-    if (now - lastTap < 300) { resetZoom(); lastTap = 0; return; }
+    if (now - lastTap < 280) { resetZoom(); lastTap = 0; return; }
     lastTap = now;
-
-    if (gestureType === "pan") { gestureType = "none"; return; }
-
-    // Swipe to next/prev (only when not zoomed)
+    if (tMode === "pan") { tMode = "none"; return; }
     if (curScale <= 1 && e.changedTouches.length) {
       var dx = e.changedTouches[0].clientX - t1x;
       var dy = e.changedTouches[0].clientY - t1y;
       if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) stepLightbox(dx > 0 ? -1 : 1);
     }
-    gestureType = "none";
+    tMode = "none";
   }, { passive: true });
 })();
 
