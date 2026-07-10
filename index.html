@@ -1319,6 +1319,7 @@ function renderLightbox() {
   function applyScale(newScale, focalVX, focalVY) {
     // focalVX/Y = viewport point that should stay fixed during zoom
     newScale = Math.min(Math.max(newScale, 1), 10);
+    if (newScale <= 1) { panX = 0; panY = 0; curScale = 1; slider.value = 1; zoomVal.textContent = "1×"; commit(getImg()); return; }
     // Compute where that focal point is in image-natural coords
     var fNatX = (focalVX - panX) / curScale;
     var fNatY = (focalVY - panY) / curScale;
