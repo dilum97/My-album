@@ -400,7 +400,7 @@ ul{ list-style:none; }
   opacity:0; visibility:hidden; transition: opacity .35s var(--ease), visibility .35s var(--ease);
 }
 .lightbox.open{ opacity:1; visibility:visible; }
-.lightbox-media{ max-width:92vw; max-height:80vh; position:relative; touch-action: pan-y; }
+.lightbox-media{ max-width:92vw; max-height:80vh; position:relative; touch-action: none; touch-action: pan-y; }
 .lightbox-media img, .lightbox-media video{
   max-width:92vw; max-height:80vh; border-radius:8px; box-shadow: 0 30px 80px rgba(0,0,0,.5);
   animation: lbIn .4s var(--ease);
@@ -1383,40 +1383,62 @@ function renderLightbox() {
     var img = getImg(); if (img) img.classList.remove("dragging");
   });
 
-  // ── Touch: swipe nav or single-finger pan ────────────────
-  var t1x = 0, t1y = 0, tpx = 0, tpy = 0;
-  var tMode = "none", lastTap = 0;
+  // ── Touch: swipe nav, single-finger pan & pinch-zoom ────────────────
+      var t1x = 0, t1y = 0, tpx = 0, tpy = 0;
+      var tMode = "none", lastTap = 0;
+      var startDist = 0, startScale = 1;
 
-  media.addEventListener("touchstart", function(e) {
-    if (e.touches.length === 1) {
-      t1x = e.touches[0].clientX; t1y = e.touches[0].clientY;
-      tpx = panX; tpy = panY;
-      tMode = curScale > 1 ? "pan" : "swipe";
-    } else { tMode = "none"; }
-  }, { passive: true });
+      media.addEventListener("touchstart", function(e) {
+        if (e.touches.length === 1) {
+          t1x = e.touches[0].clientX; t1y = e.touches[0].clientY;
+          tpx = panX; tpy = panY;
+          tMode = curScale > 1 ? "pan" : "swipe";
+        } else if (e.touches.length === 2) {
+          // ඇඟිලි දෙකක් තැබූ විට pinch-zoom mode එක activate කරයි
+          tMode = "zoom";
+          startScale = curScale;
+          startDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+        } else { tMode = "none"; }
+      }, { passive: false });
 
-  media.addEventListener("touchmove", function(e) {
-    if (tMode === "pan" && e.touches.length === 1) {
-      e.preventDefault();
-      panX = tpx + (e.touches[0].clientX - t1x);
-      panY = tpy + (e.touches[0].clientY - t1y);
-      commit(getImg());
-    }
-  }, { passive: false });
+      media.addEventListener("touchmove", function(e) {
+        if (tMode === "pan" && e.touches.length === 1) {
+          e.preventDefault();
+          panX = tpx + (e.touches[0].clientX - t1x);
+          panY = tpy + (e.touches[0].clientY - t1y);
+          commit(getImg());
+        } else if (tMode === "zoom" && e.touches.length === 2) {
+          e.preventDefault();
+          // ඇඟිලි දෙක අතර පරතරය වෙනස් වන වේගයට අනුව සිනිදුවට zoom කරයි
+          var dist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          if (startDist > 0) {
+            var factor = dist / startDist;
+            var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            applyScale(startScale * factor, midX, midY);
+          }
+        }
+      }, { passive: false });
 
-  media.addEventListener("touchend", function(e) {
-    var now = Date.now();
-    if (now - lastTap < 280) { resetZoom(); lastTap = 0; return; }
-    lastTap = now;
-    if (tMode === "pan") { tMode = "none"; return; }
-    if (curScale <= 1 && e.changedTouches.length) {
-      var dx = e.changedTouches[0].clientX - t1x;
-      var dy = e.changedTouches[0].clientY - t1y;
-      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) stepLightbox(dx > 0 ? -1 : 1);
-    }
-    tMode = "none";
-  }, { passive: true });
-})();
+      media.addEventListener("touchend", function(e) {
+        var now = Date.now();
+        if (now - lastTap < 280) { resetZoom(); lastTap = 0; return; }
+        lastTap = now;
+        if (tMode === "pan" || tMode === "zoom") { tMode = "none"; return; }
+        if (curScale <= 1 && e.changedTouches.length) {
+          var dx = e.changedTouches[0].clientX - t1x;
+          var dy = e.changedTouches[0].clientY - t1y;
+          if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) stepLightbox(dx > 0 ? -1 : 1);
+        }
+        tMode = "none";
+      }, { passive: true });
+    })();
 
 /* ============================================================
    DOWNLOAD (requires Google sign-in)
