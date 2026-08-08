@@ -400,7 +400,7 @@ ul{ list-style:none; }
   opacity:0; visibility:hidden; transition: opacity .35s var(--ease), visibility .35s var(--ease);
 }
 .lightbox.open{ opacity:1; visibility:visible; }
-.lightbox-media{ max-width:92vw; max-height:80vh; position:relative; touch-action: none; touch-action: pan-y; }
+.lightbox-media{ max-width:92vw; max-height:80vh; position:relative; touch-action: pan-y; }
 .lightbox-media img, .lightbox-media video{
   max-width:92vw; max-height:80vh; border-radius:8px; box-shadow: 0 30px 80px rgba(0,0,0,.5);
   animation: lbIn .4s var(--ease);
@@ -720,46 +720,75 @@ footer p{ color: var(--text-muted); font-size:.85rem; }
    LIGHTBOX — pinch-zoom: allow overflow on the img itself
    ========================================================= */
 .lightbox-media img {
-  touch-action: none;
-  will-change: transform;
-  cursor: zoom-in;
   max-width: 92vw;
   max-height: 80vh;
   user-select: none;
   -webkit-user-select: none;
 }
-.lightbox-media img.zoomed {
-  cursor: grab;
-}
-.lightbox-media img.dragging { cursor: grabbing; }
+ 
 
-/* Zoom slider bar */
-.lb-zoom-bar {
-  position: absolute;
-  bottom: 44px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 6;
-  display: flex;
-  align-items: center;
-  gap: .7rem;
-  background: rgba(20,12,11,.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: .45rem 1.1rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.14);
-  white-space: nowrap;
+/* =========================================================
+   COMMENTS SECTION
+   ========================================================= */
+.comments-section {
+  padding: 2.5rem 1.25rem 4rem;
+  max-width: 680px;
+  margin: 0 auto;
 }
-.lb-zoom-label { color: rgba(255,255,255,.6); font-size: .72rem; }
-.lb-zoom-val   { color: var(--color-gold-light); font-size: .78rem; font-weight:500; min-width:30px; }
-#zoomSlider {
-  width: 130px;
-  accent-color: var(--color-gold);
-  cursor: pointer;
-  height: 4px;
+.comments-inner { display: flex; flex-direction: column; gap: 1.4rem; }
+
+/* Form */
+.comment-form {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--radius-md);
+  padding: 1.2rem 1.3rem;
 }
-@media (max-width: 480px) { #zoomSlider { width: 90px; } .lb-zoom-bar { padding: .4rem .8rem; } }
+.cf-row { display: flex; gap: .8rem; align-items: flex-start; }
+.cf-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.comment-form textarea {
+  flex: 1; border: none; background: transparent; resize: none;
+  font-family: var(--font-body); font-size: .9rem; color: var(--text-primary);
+  outline: none; line-height: 1.5; padding: .3rem 0;
+}
+.comment-form textarea::placeholder { color: var(--text-muted); }
+.cf-actions {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: .8rem; padding-top: .7rem;
+  border-top: 1px solid var(--color-line);
+}
+.cf-char { font-size: .72rem; color: var(--text-muted); }
+.cf-signin-prompt {
+  display: flex; flex-direction: column; align-items: center; gap: .7rem;
+  text-align: center; padding: .4rem;
+  color: var(--text-muted); font-size: .88rem;
+}
+.btn-sm { padding: .5rem 1.1rem; font-size: .8rem; }
+
+/* Comments list */
+.comments-list { display: flex; flex-direction: column; gap: .9rem; }
+.comment-card {
+  display: flex; gap: .85rem; align-items: flex-start;
+  background: var(--glass-bg);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  padding: .95rem 1.1rem;
+}
+.comment-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.comment-body { flex: 1; min-width: 0; }
+.comment-meta {
+  display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap;
+  margin-bottom: .25rem;
+}
+.comment-name { font-weight: 600; font-size: .84rem; color: var(--text-primary); }
+.comment-time { font-size: .72rem; color: var(--text-muted); }
+.comment-text { font-size: .88rem; color: var(--text-primary); line-height: 1.55; word-break: break-word; }
+.comment-loading { text-align: center; color: var(--text-muted); font-size: .85rem; padding: 1rem; }
+.comment-empty {
+  text-align: center; color: var(--text-muted); font-size: .88rem;
+  padding: 1.5rem; font-family: var(--font-display); font-style: italic;
+}
 
 </style>
 </head>
@@ -848,6 +877,40 @@ footer p{ color: var(--text-muted); font-size:.85rem; }
     <div class="skeleton"></div><div class="skeleton"></div>
   </div>
   <div class="gallery-grid" id="galleryGrid"></div>
+
+  <!-- Comments -->
+  <section class="comments-section" id="commentsSection">
+    <div class="comments-inner">
+      <div class="eyebrow" style="justify-content:flex-start;margin-bottom:.8rem">Comments</div>
+
+      <!-- Add comment form -->
+      <div class="comment-form" id="commentForm">
+        <div id="cfSignedIn" style="display:none;">
+          <div class="cf-row">
+            <img id="cfAvatar" src="" alt="" class="cf-avatar">
+            <textarea id="commentInput" placeholder="Leave a kind word about these memories…" maxlength="500" rows="2"></textarea>
+          </div>
+          <div class="cf-actions">
+            <span id="cfCharCount" class="cf-char">0 / 500</span>
+            <button class="btn btn-gold btn-sm" id="commentSubmitBtn">Post</button>
+          </div>
+        </div>
+        <div id="cfSignedOut" class="cf-signin-prompt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:22px;height:22px;color:var(--color-rose-gold)"><circle cx="12" cy="8" r="3.5"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <p>Sign in with Google to leave a comment.</p>
+          <button class="btn btn-google btn-sm" id="commentSignInBtn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" style="width:16px;height:16px">
+            Sign in
+          </button>
+        </div>
+      </div>
+
+      <!-- Comments list -->
+      <div class="comments-list" id="commentsList">
+        <div class="comment-loading">Loading comments…</div>
+      </div>
+    </div>
+  </section>
 </section>
 
 <!-- ============ LIGHTBOX ============ -->
@@ -868,11 +931,6 @@ footer p{ color: var(--text-muted); font-size:.85rem; }
   </button>
   <div class="lightbox-media" id="lightboxMedia"></div>
   <div class="lb-counter" id="lightboxCounter"></div>
-  <div class="lb-zoom-bar" id="lbZoomBar">
-    <span class="lb-zoom-label">1×</span>
-    <input type="range" id="zoomSlider" min="1" max="10" step="0.1" value="1">
-    <span class="lb-zoom-val" id="zoomVal">1×</span>
-  </div>
 </div>
 
 <!-- ============ LOGIN MODAL ============ -->
@@ -1061,6 +1119,7 @@ onAuthStateChanged(auth, async (user) => {
       }, { merge: true });
     } catch (e) { /* non-fatal */ }
 
+    updateCommentFormAuth();
     if (state.pendingDownload) {
       const item = state.pendingDownload;
       state.pendingDownload = null;
@@ -1071,6 +1130,7 @@ onAuthStateChanged(auth, async (user) => {
     chip.innerHTML = ICONS.person;
     chip.classList.remove("user-chip");
     chip.classList.add("icon-btn");
+    updateCommentFormAuth();
   }
 });
 
@@ -1184,6 +1244,7 @@ function showHome() {
   $("#galleryView").classList.remove("active");
   $("#homeView").classList.add("active");
   detachGalleryListener();
+  stopComments();
   window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
 }
 
@@ -1201,6 +1262,8 @@ function openGallery(catId) {
   state.currentCategory = cat || { id: catId, name: "Gallery" };
   $("#homeView").classList.remove("active");
   $("#galleryView").classList.add("active");
+  updateCommentFormAuth();
+  listenComments(catId);
   $("#galleryTitle").textContent = state.currentCategory.name;
   $("#galleryGrid").innerHTML = "";
   $("#galleryMeta").textContent = "Loading…";
@@ -1291,7 +1354,6 @@ function stepLightbox(dir) {
   const len = state.galleryItems.length;
   if (!len) return;
   state.lightboxIndex = (state.lightboxIndex + dir + len) % len;
-  if (window._lbResetZoom) window._lbResetZoom();
   renderLightbox();
 }
 
@@ -1306,139 +1368,20 @@ function renderLightbox() {
 }
 
 // Swipe + natural pinch-zoom for lightbox (like native gallery)
-(function enableZoomAndPan() {
+// Simple swipe navigation (zoom removed)
+(function enableSwipe() {
   const media = $("#lightboxMedia");
-  const slider = $("#zoomSlider");
-  const zoomVal = $("#zoomVal");
-
-  var curScale = 1;
-  var panX = 0, panY = 0;
-
-  function getImg() { return media.querySelector("img"); }
-
-  function applyScale(newScale, focalVX, focalVY) {
-    // focalVX/Y = viewport point that should stay fixed during zoom
-    newScale = Math.min(Math.max(newScale, 1), 10);
-    if (newScale <= 1) { panX = 0; panY = 0; curScale = 1; slider.value = 1; zoomVal.textContent = "1×"; commit(getImg()); return; }
-    // Compute where that focal point is in image-natural coords
-    var fNatX = (focalVX - panX) / curScale;
-    var fNatY = (focalVY - panY) / curScale;
-    // After scale change, adjust pan so focal point stays at same viewport position
-    panX = focalVX - fNatX * newScale;
-    panY = focalVY - fNatY * newScale;
-    curScale = newScale;
-    slider.value = curScale;
-    zoomVal.textContent = (curScale % 1 === 0 ? curScale : curScale.toFixed(1)) + "×";
-    commit(getImg());
-  }
-
-  function setScaleCenter(newScale) {
-    var r = media.getBoundingClientRect();
-    applyScale(newScale, r.left + r.width / 2, r.top + r.height / 2);
-  }
-
-  function commit(img) {
-    if (!img) return;
-    img.style.transformOrigin = "0 0";
-    img.style.transform = "translate(" + Math.round(panX) + "px," + Math.round(panY) + "px) scale(" + curScale + ")";
-    img.style.transition = "none";
-    img.classList.toggle("zoomed", curScale > 1);
-  }
-
-  function resetZoom() {
-    curScale = 1; panX = 0; panY = 0;
-    if (slider) slider.value = 1;
-    if (zoomVal) zoomVal.textContent = "1×";
-    var img = getImg();
-    if (img) { img.style.transform = ""; img.style.transition = "transform .2s ease"; img.classList.remove("zoomed", "dragging"); }
-  }
-  window._lbResetZoom = resetZoom;
-
-  // ── Slider ───────────────────────────────────────────────
-  slider.addEventListener("input", function() {
-    setScaleCenter(parseFloat(this.value));
-  });
-
-  // ── Mouse wheel (desktop) ────────────────────────────────
-  media.addEventListener("wheel", function(e) {
-    e.preventDefault();
-    applyScale(curScale + (e.deltaY < 0 ? 0.25 : -0.25), e.clientX, e.clientY);
-  }, { passive: false });
-
-  // ── Mouse drag to pan (desktop) ──────────────────────────
-  var mdrag = false, msx = 0, msy = 0, mpx = 0, mpy = 0;
-  media.addEventListener("mousedown", function(e) {
-    if (e.button !== 0) return;
-    mdrag = true; msx = e.clientX; msy = e.clientY; mpx = panX; mpy = panY;
-    var img = getImg(); if (img) img.classList.add("dragging");
-    e.preventDefault();
-  });
-  window.addEventListener("mousemove", function(e) {
-    if (!mdrag) return;
-    panX = mpx + (e.clientX - msx); panY = mpy + (e.clientY - msy);
-    commit(getImg());
-  });
-  window.addEventListener("mouseup", function() {
-    mdrag = false;
-    var img = getImg(); if (img) img.classList.remove("dragging");
-  });
-
-  // ── Touch: swipe nav, single-finger pan & pinch-zoom ────────────────
-      var t1x = 0, t1y = 0, tpx = 0, tpy = 0;
-      var tMode = "none", lastTap = 0;
-      var startDist = 0, startScale = 1;
-
-      media.addEventListener("touchstart", function(e) {
-        if (e.touches.length === 1) {
-          t1x = e.touches[0].clientX; t1y = e.touches[0].clientY;
-          tpx = panX; tpy = panY;
-          tMode = curScale > 1 ? "pan" : "swipe";
-        } else if (e.touches.length === 2) {
-          // ඇඟිලි දෙකක් තැබූ විට pinch-zoom mode එක activate කරයි
-          tMode = "zoom";
-          startScale = curScale;
-          startDist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
-        } else { tMode = "none"; }
-      }, { passive: false });
-
-      media.addEventListener("touchmove", function(e) {
-        if (tMode === "pan" && e.touches.length === 1) {
-          e.preventDefault();
-          panX = tpx + (e.touches[0].clientX - t1x);
-          panY = tpy + (e.touches[0].clientY - t1y);
-          commit(getImg());
-        } else if (tMode === "zoom" && e.touches.length === 2) {
-          e.preventDefault();
-          // ඇඟිලි දෙක අතර පරතරය වෙනස් වන වේගයට අනුව සිනිදුවට zoom කරයි
-          var dist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
-          if (startDist > 0) {
-            var factor = dist / startDist;
-            var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-            var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-            applyScale(startScale * factor, midX, midY);
-          }
-        }
-      }, { passive: false });
-
-      media.addEventListener("touchend", function(e) {
-        var now = Date.now();
-        if (now - lastTap < 280) { resetZoom(); lastTap = 0; return; }
-        lastTap = now;
-        if (tMode === "pan" || tMode === "zoom") { tMode = "none"; return; }
-        if (curScale <= 1 && e.changedTouches.length) {
-          var dx = e.changedTouches[0].clientX - t1x;
-          var dy = e.changedTouches[0].clientY - t1y;
-          if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) stepLightbox(dx > 0 ? -1 : 1);
-        }
-        tMode = "none";
-      }, { passive: true });
-    })();
+  let startX = 0, startY = 0;
+  media.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  media.addEventListener("touchend", (e) => {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) stepLightbox(dx > 0 ? -1 : 1);
+  }, { passive: true });
+})();
 
 /* ============================================================
    DOWNLOAD (requires Google sign-in)
@@ -1554,6 +1497,143 @@ $$("[data-share]").forEach(btn => btn.addEventListener("click", async () => {
    PWA
    ============================================================ */
 // sw.js not used in self-contained mode
+
+
+/* ============================================================
+   COMMENTS
+   ============================================================ */
+let commentsUnsub = null;
+
+function listenComments(catId) {
+  if (commentsUnsub) { commentsUnsub(); commentsUnsub = null; }
+  const list = $("#commentsList");
+  list.innerHTML = '<div class="comment-loading">Loading comments…</div>';
+
+  const q = query(
+    collection(db, "comments"),
+    where("categoryId", "==", catId),
+    orderBy("createdAt", "asc")
+  );
+  commentsUnsub = onSnapshot(q, (snap) => {
+    if (snap.empty) {
+      list.innerHTML = '<p class="comment-empty">No comments yet — be the first to share a memory 🤍</p>';
+      return;
+    }
+    list.innerHTML = snap.docs.map(d => {
+      const c = d.data();
+      const ago = timeAgo(c.createdAt?.toDate?.() || new Date());
+      return `
+        <div class="comment-card">
+          <img class="comment-avatar" src="${c.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(c.displayName||'?') + '&background=D49AA3&color=fff'}" alt="${escapeHtml(c.displayName||'')}">
+          <div class="comment-body">
+            <div class="comment-meta">
+              <span class="comment-name">${escapeHtml(c.displayName || 'Someone')}</span>
+              <span class="comment-time">${ago}</span>
+            </div>
+            <p class="comment-text">${escapeHtml(c.text)}</p>
+          </div>
+        </div>`;
+    }).join("");
+  }, () => {
+    // Index not ready — fallback without orderBy
+    const q2 = query(collection(db, "comments"), where("categoryId", "==", catId));
+    commentsUnsub = onSnapshot(q2, (snap) => {
+      if (snap.empty) { list.innerHTML = '<p class="comment-empty">No comments yet — be the first 🤍</p>'; return; }
+      const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+      list.innerHTML = docs.map(c => {
+        const ago = timeAgo(c.createdAt?.toDate?.() || new Date());
+        return `<div class="comment-card">
+          <img class="comment-avatar" src="${c.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(c.displayName||'?') + '&background=D49AA3&color=fff'}" alt="">
+          <div class="comment-body">
+            <div class="comment-meta">
+              <span class="comment-name">${escapeHtml(c.displayName || 'Someone')}</span>
+              <span class="comment-time">${ago}</span>
+            </div>
+            <p class="comment-text">${escapeHtml(c.text)}</p>
+          </div>
+        </div>`;
+      }).join("");
+    });
+  });
+}
+
+function stopComments() {
+  if (commentsUnsub) { commentsUnsub(); commentsUnsub = null; }
+  const list = $("#commentsList");
+  if (list) list.innerHTML = '';
+}
+
+function updateCommentFormAuth() {
+  const signedIn = $("#cfSignedIn");
+  const signedOut = $("#cfSignedOut");
+  if (!signedIn || !signedOut) return;
+  if (state.user) {
+    signedIn.style.display = "block";
+    signedOut.style.display = "none";
+    const av = $("#cfAvatar");
+    if (av) { av.src = state.user.photoURL || ''; av.alt = state.user.displayName || ''; }
+  } else {
+    signedIn.style.display = "none";
+    signedOut.style.display = "flex";
+  }
+}
+
+// Character counter
+$("#commentInput")?.addEventListener("input", function() {
+  const n = this.value.length;
+  const cc = $("#cfCharCount");
+  if (cc) cc.textContent = n + " / 500";
+});
+
+// Submit
+$("#commentSubmitBtn")?.addEventListener("click", async () => {
+  const input = $("#commentInput");
+  const text = input?.value.trim();
+  if (!text) return;
+  if (!state.user) { openModal("#loginModal"); return; }
+  const catId = state.currentCategory?.id;
+  if (!catId) return;
+
+  const btn = $("#commentSubmitBtn");
+  btn.textContent = "Posting…";
+  btn.disabled = true;
+  try {
+    await addDoc(collection(db, "comments"), {
+      categoryId: catId,
+      text,
+      uid: state.user.uid,
+      displayName: state.user.displayName || state.user.email || "Guest",
+      photoURL: state.user.photoURL || "",
+      createdAt: serverTimestamp()
+    });
+    input.value = "";
+    const cc = $("#cfCharCount");
+    if (cc) cc.textContent = "0 / 500";
+    toast("Comment posted 🤍");
+  } catch (e) {
+    console.error(e);
+    toast("Couldn't post — please try again");
+  } finally {
+    btn.textContent = "Post";
+    btn.disabled = false;
+  }
+});
+
+// Sign in from comment form
+$("#commentSignInBtn")?.addEventListener("click", async () => {
+  try { await signInWithPopup(auth, googleProvider); } catch {}
+});
+
+function timeAgo(date) {
+  if (!date) return "";
+  const s = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (s < 60) return "just now";
+  if (s < 3600) return Math.floor(s/60) + "m ago";
+  if (s < 86400) return Math.floor(s/3600) + "h ago";
+  if (s < 604800) return Math.floor(s/86400) + "d ago";
+  return date.toLocaleDateString("en-GB", { day:"numeric", month:"short" });
+}
 
 /* ============================================================
    INIT
